@@ -396,11 +396,11 @@ PAGE=r"""<!doctype html>
 <meta name="theme-color" content="#090811"><script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>STUDIO DLC — Digital Atelier</title>
 <style>
-:root{color-scheme:dark;--bg:#070912;--panel:#101426;--panel2:#151b31;--line:rgba(120,157,255,.19);--text:#f4f6ff;--muted:#929bb8;--blue:#43a8ff;--violet:#9b70ff;--cyan:#74e5ee;--shadow:0 18px 60px #0008}
+:root{color-scheme:dark;--bg:#07091a;--panel:#111631;--panel2:#171e43;--line:rgba(83,180,255,.32);--text:#f5f8ff;--muted:#a5b4d4;--blue:#38b6ff;--violet:#8765ff;--cyan:#38f0e2;--shadow:0 20px 65px #0009}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{min-height:100%;background:var(--bg);-webkit-text-size-adjust:100%;scroll-behavior:auto}
-body{margin:0;min-height:100vh;min-height:100svh;padding:0 0 calc(96px + env(safe-area-inset-bottom));overflow-x:hidden;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:radial-gradient(ellipse at 8% 0%,#164c9a2c,transparent 38%),radial-gradient(ellipse at 92% 22%,#6536a52a,transparent 38%),linear-gradient(180deg,#080a15,#070912 60%,#090b18);-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;min-height:100svh;padding:0 0 calc(96px + env(safe-area-inset-bottom));overflow-x:hidden;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:radial-gradient(ellipse at 5% 0%,#087bff55,transparent 36%),radial-gradient(ellipse at 95% 18%,#7b35ff48,transparent 38%),radial-gradient(ellipse at 52% 100%,#00d9d022,transparent 42%),linear-gradient(180deg,#080d25,#08091b 58%,#090d22);-webkit-tap-highlight-color:transparent}
 body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(120deg,transparent 25%,#5e91ff08 50%,transparent 75%);background-size:240% 240%;animation:ambient 20s ease-in-out infinite alternate}
 @keyframes ambient{to{background-position:100% 100%}}
 .noise{display:none}.aurora{position:fixed;z-index:-1;width:260px;height:260px;border-radius:50%;filter:blur(100px);opacity:.15;pointer-events:none;animation:drift 22s ease-in-out infinite alternate}.a1{left:-180px;top:8%;background:#287dff}.a2{right:-190px;top:48%;background:#8c52ff;animation-delay:-9s}@keyframes drift{to{transform:translate3d(45px,55px,0) scale(1.1)}}
@@ -410,7 +410,7 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .status{max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 13px;border:1px solid #8c85ff33;border-radius:99px;background:linear-gradient(110deg,#16182d,#101b31);color:#c7c8ff;font-size:10px;font-weight:800;letter-spacing:1px}
 .view{display:none;min-width:0}.view.active{display:block;animation:pageEnter .34s cubic-bezier(.2,.8,.2,1) both}.view.active.page-left{animation:slideLeft .32s cubic-bezier(.2,.8,.2,1) both}.view.active.page-right{animation:slideRight .32s cubic-bezier(.2,.8,.2,1) both}
 @keyframes pageEnter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}@keyframes slideLeft{from{opacity:.35;transform:translateX(18px)}to{opacity:1;transform:none}}@keyframes slideRight{from{opacity:.35;transform:translateX(-18px)}to{opacity:1;transform:none}}
-.hero{position:relative;isolation:isolate;overflow:hidden;min-height:315px;padding:clamp(26px,7vw,44px);border:1px solid #8d9dff38;border-radius:28px;background:radial-gradient(ellipse at 88% 10%,#9c64ff36,transparent 42%),radial-gradient(ellipse at 8% 100%,#248fff35,transparent 46%),linear-gradient(135deg,#151a35,#0b1125 56%,#17102c);box-shadow:0 24px 65px #0007,inset 0 1px 0 #ffffff18}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:315px;padding:clamp(26px,7vw,44px);border:1px solid #8d9dff38;border-radius:28px;background:radial-gradient(ellipse at 88% 10%,#a04dff66,transparent 42%),radial-gradient(ellipse at 8% 100%,#168dff66,transparent 46%),radial-gradient(ellipse at 55% 80%,#00d7c52b,transparent 48%),linear-gradient(135deg,#172a58,#101633 56%,#211345);box-shadow:0 24px 65px #0007,inset 0 1px 0 #ffffff18}
 .hero:before{content:"";position:absolute;z-index:-1;width:210px;height:210px;right:-80px;top:-100px;border:1px solid #aabaff55;border-radius:50%;box-shadow:0 0 0 22px #fff1,0 0 0 48px #fff1,0 0 70px #8e6bff3a;animation:orbit 34s linear infinite}@keyframes orbit{to{transform:rotate(360deg)}}
 .hero:after{content:"";position:absolute;z-index:-1;width:180px;height:180px;right:8%;bottom:-155px;border-radius:50%;background:#3f9cff;filter:blur(65px);opacity:.22}
 .eyebrow{display:flex;align-items:center;gap:9px;color:#b2a2ff;font-size:10px;font-weight:900;letter-spacing:2.2px}.eyebrow:before{content:"";width:19px;height:1px;background:linear-gradient(90deg,var(--blue),var(--violet));box-shadow:0 0 10px var(--blue)}
@@ -424,7 +424,7 @@ button{font:inherit;touch-action:manipulation;cursor:pointer;-webkit-user-select
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.service{position:relative;min-width:0;overflow:hidden;padding:14px;border:1px solid #8a93ff2c;border-radius:21px;background:linear-gradient(145deg,#171a32,#0d1122 78%);box-shadow:0 12px 34px #0005,inset 0 1px 0 #ffffff0b;transition:transform .25s,border-color .25s,box-shadow .25s}.service:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 90% 0%,#9870ff22,transparent 48%)}.service:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(135deg,#ffffff08,transparent 38%,transparent 70%,#65caff08)}@media(hover:hover){.service:hover{transform:translateY(-4px);border-color:#69baff77;box-shadow:0 18px 42px #0007}}
 .serviceart{position:relative;display:flex;align-items:center;justify-content:center;height:112px;margin-bottom:13px;overflow:hidden;border:1px solid #a49aff30;border-radius:15px;background:radial-gradient(circle at 50% 40%,#42448c,#1c2349 58%,#101426)}.serviceart:before,.serviceart:after{content:"";position:absolute;width:100px;height:100px;border:1px solid #b3c4ff55;border-radius:50%;box-shadow:0 0 0 16px #ffffff06}.serviceart:after{width:56px;height:56px;border-color:#79dff055;transform:translate(24px,-14px)}.glyph{z-index:1;color:#f0eaff;font-size:37px;filter:drop-shadow(0 0 15px #8e7cffaa)}
 .category{color:#a89cff;font-size:9px;font-weight:900;letter-spacing:1.3px;text-transform:uppercase}.service h3{margin:7px 0 6px;color:#f0f1ff;font-size:15px;font-weight:850;line-height:1.3}.service p{min-height:36px;margin:0;color:#a0a5c0;font-size:11px;line-height:1.55}.price{margin:13px 0 10px;color:#d7d1ff;font-size:14px;font-weight:900}.service .secondary{position:relative;z-index:2;width:100%}
-.panel{margin:12px 0;padding:18px;border:1px solid #8995ff2b;border-radius:21px;background:linear-gradient(145deg,#171a31f5,#0d1122f7);box-shadow:0 14px 38px #0005,inset 0 1px 0 #ffffff0b}.muted{color:#a0a5c0;font-size:12px;line-height:1.7}
+.panel{margin:12px 0;padding:18px;border:1px solid #8995ff2b;border-radius:21px;background:radial-gradient(ellipse at 100% 0%,#3b43a833,transparent 46%),linear-gradient(145deg,#17234af5,#10142df7 58%,#11102af7);box-shadow:0 14px 38px #0005,inset 0 1px 0 #ffffff0b}.muted{color:#a0a5c0;font-size:12px;line-height:1.7}
 .field{display:block;width:100%;min-height:46px;margin:9px 0;padding:13px 14px;border:1px solid #8a96ff2e;border-radius:13px;outline:0;color:#f4f4ff;background:#090d1b;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:border-color .2s,box-shadow .2s}.field::placeholder{color:#777f9f}.field:focus{border-color:#9a86ff;box-shadow:0 0 0 3px #9078ff20}textarea.field{min-height:92px;resize:vertical;line-height:1.5}.wide{width:100%;margin-top:8px}
 .order{min-width:0;margin:11px 0;padding:16px;border:1px solid #8995ff2b;border-radius:19px;background:linear-gradient(145deg,#171a31,#0d1122);box-shadow:0 12px 30px #0005,inset 0 1px 0 #ffffff08;overflow:visible}.orderhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}.order b{color:#f1f1ff;font-size:14px;line-height:1.45}.badge{display:inline-flex;align-items:center;max-width:100%;padding:6px 10px;border:1px solid #a18bff55;border-radius:99px;color:#d4c6ff;background:#9875ff19;font-size:10px;font-weight:800;overflow-wrap:anywhere}.order .muted{overflow-wrap:anywhere}.order button{max-width:100%}.order input[type=file]{max-width:100%;font-size:11px;color:#b1b5d0}
 .empty{padding:26px 18px;border:1px dashed #9c8cff4d;border-radius:18px;color:#a0a5c0;background:#111426;font-size:12px;line-height:1.7;text-align:center}.post{padding:14px 2px;border-bottom:1px solid var(--line)}.post:last-child{border:0}.post p{margin:8px 0;white-space:pre-wrap;color:#e1e2f6;font-size:13px;line-height:1.65}.post small{color:#9298b6}
@@ -572,6 +572,11 @@ body:before{background:linear-gradient(115deg,transparent 20%,#d6e7f008 50%,tran
 .checkout-pay{min-height:58px;background:linear-gradient(110deg,#65baff,#277ee6 55%,#536de8);box-shadow:0 10px 30px #287de655}
 .checkout-note{font-size:11px;line-height:1.55;color:#8995aa;margin-top:17px}
 
+.primary{background:linear-gradient(105deg,#50d7ff 0%,#4b8cff 48%,#a16aff 100%);box-shadow:0 10px 32px #438cff55,0 0 22px #36d9ff20,inset 0 1px 0 #ffffffaa}
+.secondary{border-color:#4778c766;background:linear-gradient(135deg,#1c2b55,#171633 58%,#251743);box-shadow:inset 0 1px #ffffff12,0 8px 24px #0004}
+.nav{background:linear-gradient(90deg,#080e24f5,#10102cf5,#0b1728f5);border-top-color:#4b83d955}
+.checkout-summary{background:radial-gradient(ellipse at 100% 0%,#7a43ff55,transparent 48%),linear-gradient(135deg,#103a66,#121a42 58%,#201343);border-color:#4c9dff;box-shadow:0 14px 40px #174cff33,inset 0 1px #ffffff22}
+.checkout-provider{background:linear-gradient(120deg,#122e50,#201844);border-color:#4e87d9}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="brand-mark" aria-hidden="true"><span>S</span></span><span class="brand-name"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -639,25 +644,17 @@ let checkoutUrl='',checkoutOrderId=0;
 async function createOrder(){
  if(!selected)return;
  const btn=document.querySelector('[data-action="create-order"]');
- if(btn){btn.disabled=true;btn.textContent='Создаём заказ…'}
+ if(btn){btn.disabled=true;btn.textContent='Переходим к оплате…'}
  try{
   const d=await api('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:selected.id,comment:$('orderComment').value})});
-  checkoutUrl=d.payment_url;checkoutOrderId=d.id;
-  const title=d.product_title||selected.title,price=d.price||selected.price;
-  $('orderModal').querySelector('.modal').innerHTML=
-   '<button class="modalclose" data-action="close-modal">×</button>'+
-   '<div class="checkout-brand"><span class="checkout-mark">S</span><span>STUDIO <b>DLC</b> PAY</span></div>'+
-   '<div class="checkout-kicker">SECURE CHECKOUT · ЗАКАЗ #'+d.id+'</div>'+
-   '<h2 class="checkout-title">Заказ создан</h2>'+
-   '<p class="muted">Проверь детали и перейди на официальную страницу YooMoney для оплаты.</p>'+
-   '<div class="checkout-summary"><small>УСЛУГА</small><b>'+esc(title)+'</b><small>К ОПЛАТЕ / ЦЕНА ПО ЗАКАЗУ</small><strong>'+esc(price)+'</strong></div>'+
-   '<div class="checkout-provider"><span class="checkout-provider-icon">Ю</span><span><b>YooMoney</b><small>Переход на внешний платёжный сервис</small></span><span class="checkout-arrow">↗</span></div>'+
-   '<button class="primary wide checkout-pay" data-action="open-payment">Перейти к оплате ↗</button>'+
-   '<button class="secondary wide" data-action="checkout-orders">Я оплатил — открыть мои заказы</button>'+
-   '<p class="checkout-note">После оплаты вернись сюда и прикрепи подтверждение в заказе. Оплата проверяется владельцем вручную. STUDIO DLC не является банком или платёжной системой.</p>';
-  toast('Заказ #'+d.id+' создан');
+  checkoutOrderId=d.id;
+  closeModal();
+  toast('Заказ #'+d.id+' создан · открываем YooMoney');
+  const payUrl='https://yoomoney.ru/to/4100119440946091';
+  if(tg&&typeof tg.openLink==='function')tg.openLink(payUrl);
+  else window.location.href=payUrl;
  }catch(e){toast(e.message)}
- finally{if(btn)btn.disabled=false}
+ finally{if(btn){btn.disabled=false;btn.textContent='Создать заказ'}}
 }
 function openCheckoutPayment(){
  if(!checkoutUrl){toast('Ссылка оплаты не найдена');return}
