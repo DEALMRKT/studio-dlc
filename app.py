@@ -18,6 +18,8 @@ def init():
   q.execute("CREATE TABLE IF NOT EXISTS orders(id SERIAL PRIMARY KEY,user_id BIGINT NOT NULL,username TEXT DEFAULT '',product_id INT REFERENCES products(id) ON DELETE SET NULL,product_title TEXT NOT NULL,price TEXT NOT NULL,comment TEXT DEFAULT '',receipt BYTEA,receipt_type TEXT,status TEXT DEFAULT 'awaiting_review',created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("CREATE TABLE IF NOT EXISTS forum_posts(id SERIAL PRIMARY KEY,user_id BIGINT NOT NULL,username TEXT DEFAULT '',body TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("CREATE TABLE IF NOT EXISTS product_images(id SERIAL PRIMARY KEY,product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,data BYTEA NOT NULL,mime TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS user_profiles(user_id BIGINT PRIMARY KEY,username TEXT DEFAULT '',first_name TEXT DEFAULT '',balance NUMERIC(12,2) NOT NULL DEFAULT 0,created_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS order_reviews(id SERIAL PRIMARY KEY,order_id INT NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,user_id BIGINT NOT NULL,rating INT NOT NULL CHECK(rating BETWEEN 1 AND 5),body TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("SELECT count(*) n FROM products")
   if q.fetchone()["n"]==0:
    q.execute("INSERT INTO products(title,description,price,category) VALUES(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s)",("CRMP-сайт","Современный сайт для CRMP-проекта","От 1500 ₽","Сайты","Форум проекта","Категории, темы и профили пользователей","От 1200 ₽","Форумы","Motion-дизайн","Анимации и премиальная визуальная подача","От 700 ₽","Дизайн"))
@@ -92,6 +94,9 @@ def owner(req):
  u=user(req)
  if not OWNER or str(u["id"])!=OWNER: raise HTTPException(403,"Доступ только владельцу")
  return u
+def require_subscription(u):
+ if not subscribed(u['id']): raise HTTPException(403,'Сначала подпишитесь на @studiodlc и нажмите «Проверить подписку».')
+ return u
 def subscribed(uid):
  try:
   x=requests.get("https://api.telegram.org/bot"+TOKEN+"/getChatMember",params={"chat_id":CHANNEL,"user_id":uid},timeout=8).json()
@@ -110,13 +115,12 @@ def session(r:Request):
  u=user(r); return {"user":u,"owner":str(u["id"])==OWNER,"subscribed":subscribed(u["id"])}
 @app.get("/api/products")
 def products(r:Request):
- user(r)
+ require_subscription(user(r))
  with conn() as c,c.cursor() as q:
   q.execute("SELECT id,title,description,price,category,image FROM products WHERE active=TRUE ORDER BY id DESC"); return {"items":q.fetchall()}
 @app.post("/api/orders")
 async def order(r:Request):
- u=user(r)
- if not subscribed(u["id"]): raise HTTPException(403,"Сначала подпишитесь на @studiodlc")
+ u=require_subscription(user(r))
  d=await r.json()
  with conn() as c,c.cursor() as q:
   q.execute("SELECT * FROM products WHERE id=%s AND active=TRUE",(int(d.get("product_id",0)),)); p=q.fetchone()
@@ -126,8 +130,7 @@ async def order(r:Request):
  return {"id":oid,"payment_url":PAYMENT}
 @app.post("/api/orders/{oid}/receipt")
 async def receipt(oid:int,r:Request,file:UploadFile=File(...)):
- u=user(r)
- if not subscribed(u["id"]): raise HTTPException(403,"Подпишитесь на канал")
+ u=require_subscription(user(r))
  if file.content_type not in ("image/jpeg","image/png","image/webp"): raise HTTPException(400,"Нужен JPG, PNG или WEBP")
  b=await file.read()
  if len(b)>5*1024*1024: raise HTTPException(413,"Максимум 5 МБ")
@@ -138,13 +141,35 @@ async def receipt(oid:int,r:Request,file:UploadFile=File(...)):
  return {"ok":True}
 @app.get("/api/my-orders")
 def myorders(r:Request):
- u=user(r)
+ u=require_subscription(user(r))
  with conn() as c,c.cursor() as q:
-  q.execute("SELECT id,product_title,price,status,created_at FROM orders WHERE user_id=%s ORDER BY id DESC",(u["id"],)); rows=q.fetchall()
+  q.execute("SELECT o.id,o.product_title,o.price,o.status,o.created_at,EXISTS(SELECT 1 FROM order_reviews rv WHERE rv.order_id=o.id) reviewed FROM orders o WHERE o.user_id=%s ORDER BY o.id DESC",(u["id"],))
+  rows=q.fetchall()
  return {"items":[dict(x,created_at=x["created_at"].isoformat()) for x in rows]}
+@app.get("/api/profile")
+def profile(r:Request):
+ u=require_subscription(user(r))
+ with conn() as c,c.cursor() as q:
+  q.execute("INSERT INTO user_profiles(user_id,username,first_name) VALUES(%s,%s,%s) ON CONFLICT(user_id) DO UPDATE SET username=EXCLUDED.username,first_name=EXCLUDED.first_name",(u["id"],u.get("username",""),u.get("first_name","")))
+  q.execute("SELECT balance,created_at FROM user_profiles WHERE user_id=%s",(u["id"],)); p=q.fetchone()
+ return {"user":{"id":u["id"],"first_name":u.get("first_name",""),"last_name":u.get("last_name",""),"username":u.get("username","")},"balance":str(p["balance"]),"created_at":p["created_at"].isoformat()}
+@app.post("/api/orders/{oid}/review")
+async def submit_review(oid:int,r:Request):
+ u=require_subscription(user(r)); d=await r.json()
+ rating=int(d.get("rating",0)); body=str(d.get("body","")).strip()
+ if rating<1 or rating>5 or len(body)<3 or len(body)>1000: raise HTTPException(400,"Поставь оценку от 1 до 5 и напиши отзыв (3–1000 символов).")
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT product_title,status FROM orders WHERE id=%s AND user_id=%s",(oid,u["id"])); o=q.fetchone()
+  if not o: raise HTTPException(404,"Заказ не найден")
+  if o["status"]!="completed": raise HTTPException(400,"Отзыв можно оставить после выдачи заказа.")
+  q.execute("INSERT INTO order_reviews(order_id,user_id,rating,body) VALUES(%s,%s,%s,%s) ON CONFLICT(order_id) DO NOTHING RETURNING id",(oid,u["id"],rating,body))
+  if not q.fetchone(): raise HTTPException(409,"Отзыв по этому заказу уже отправлен.")
+ who="@"+u.get("username","") if u.get("username") else (u.get("first_name") or "Клиент")
+ sent=tg_call("sendMessage",{"chat_id":"@logovotziv","text":"⭐ Отзыв STUDIO DLC\nЗаказ #"+str(oid)+" · "+o["product_title"]+"\nОценка: "+("⭐"*rating)+"\nОт: "+who+"\n\n"+body})
+ return {"ok":True,"published":bool(sent and sent.get("ok"))}
 @app.get("/api/forum")
 def forum(r:Request):
- user(r)
+ require_subscription(user(r))
  with conn() as c,c.cursor() as q:
   q.execute("SELECT id,username,body,created_at FROM forum_posts ORDER BY id DESC LIMIT 100"); rows=q.fetchall()
  return {"items":[dict(x,created_at=x["created_at"].isoformat()) for x in rows]}
@@ -182,7 +207,7 @@ async def status(oid:int,r:Request):
 
 @app.get("/api/products/{pid}/images")
 def product_images(pid:int,r:Request):
- user(r)
+ require_subscription(user(r))
  with conn() as c,c.cursor() as q:
   q.execute("SELECT id,mime,data FROM product_images WHERE product_id=%s ORDER BY id",(pid,))
   return {"items":[{"id":x["id"],"type":x["mime"],"data":base64.b64encode(bytes(x["data"])).decode()} for x in q.fetchall()]}
