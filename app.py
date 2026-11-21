@@ -21,6 +21,59 @@ def init():
   if q.fetchone()["n"]==0:
    q.execute("INSERT INTO products(title,description,price,category) VALUES(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s)",("CRMP-сайт","Современный сайт для CRMP-проекта","От 1500 ₽","Сайты","Форум проекта","Категории, темы и профили пользователей","От 1200 ₽","Форумы","Motion-дизайн","Анимации и премиальная визуальная подача","От 700 ₽","Дизайн"))
 init()
+
+WEBAPP_URL = "https://studio-dlc.onrender.com"
+WEBHOOK_SECRET = hmac.new(b"studio-dlc-webhook", TOKEN.encode(), hashlib.sha256).hexdigest()[:32] if TOKEN else ""
+
+def tg_call(method, payload):
+ if not TOKEN: return None
+ try:
+  response = requests.post("https://api.telegram.org/bot"+TOKEN+"/"+method, json=payload, timeout=10)
+  data = response.json()
+  if not data.get("ok"): print("Telegram API", method, data.get("description", "request failed"))
+  return data
+ except Exception as e:
+  print("Telegram API", method, type(e).__name__)
+  return None
+
+@app.on_event("startup")
+def configure_telegram():
+ if not TOKEN: 
+  print("BOT_TOKEN is missing; Telegram bot setup skipped")
+  return
+ result = tg_call("setWebhook", {
+  "url": WEBAPP_URL + "/telegram/webhook",
+  "secret_token": WEBHOOK_SECRET,
+  "allowed_updates": ["message"]
+ })
+ if result and result.get("ok"): print("Telegram webhook configured")
+ tg_call("setChatMenuButton", {"menu_button": {
+  "type": "web_app", "text": "Открыть STUDIO DLC",
+  "web_app": {"url": WEBAPP_URL}
+ }})
+ tg_call("setMyCommands", {"commands": [
+  {"command": "start", "description": "Открыть STUDIO DLC"},
+  {"command": "help", "description": "Помощь"}
+ ]})
+
+@app.post("/telegram/webhook")
+async def telegram_webhook(r: Request):
+ if not WEBHOOK_SECRET or not hmac.compare_digest(r.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), WEBHOOK_SECRET):
+  raise HTTPException(403, "Forbidden")
+ update = await r.json()
+ message = update.get("message") or {}
+ chat = message.get("chat") or {}
+ text_in = (message.get("text") or "").strip()
+ if chat.get("id") and text_in.split("@")[0] in ("/start", "/help"):
+  tg_call("sendMessage", {
+   "chat_id": chat["id"],
+   "text": "Добро пожаловать в STUDIO DLC! Открой каталог, оформи заказ и следи за его статусом прямо в приложении.",
+   "reply_markup": {"inline_keyboard": [[
+    {"text": "✦ Открыть STUDIO DLC", "web_app": {"url": WEBAPP_URL}}
+   ]]}
+  })
+ return {"ok": True}
+
 def user(req):
  raw=req.headers.get("X-Telegram-Init-Data","")
  if not raw or not TOKEN: raise HTTPException(401,"Откройте приложение через Telegram. Владелец должен настроить BOT_TOKEN.")
@@ -41,7 +94,7 @@ def owner(req):
 def subscribed(uid):
  try:
   x=requests.get("https://api.telegram.org/bot"+TOKEN+"/getChatMember",params={"chat_id":CHANNEL,"user_id":uid},timeout=8).json()
-  return x.get("ok") and x.get("result",{}).get("status") in ("creator","administrator","member","restricted")
+  return x.get("ok") and x.get("result",{}).get("status") in ("creator","administrator","member")
  except: return False
 def notify(msg):
  if TOKEN and OWNER:
