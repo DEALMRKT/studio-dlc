@@ -528,6 +528,71 @@ body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,bod
 @media(min-width:650px){.shell{padding-top:22px}.hero{min-height:350px;padding:42px}.grid{gap:16px}.service{padding:17px}.serviceart{height:132px}.modalback{align-items:center}.modal{border-radius:25px}}
 @media(max-width:430px){.shell{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hero{min-height:300px;padding:25px 21px}.hero h1{letter-spacing:-2px}.stats{gap:7px}.stat{padding:12px 9px}.stat strong{font-size:17px}.grid{gap:9px}.service{padding:11px;border-radius:18px}.serviceart{height:100px}.service p{font-size:10px}.navbtn{flex:0 0 66px;min-width:66px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Grand release — STUDIO DLC identity and fixed navigation */
+:root{--brand-blue:#48a8ff;--brand-violet:#a27bff;--brand-cyan:#72e8f0;--brand-white:#f5f8ff;--brand-ink:#070811;--brand-panel:#101222}
+body{background:#070811;color:#f5f5ff}
+body:before{background:radial-gradient(ellipse at 14% 8%,rgba(53,143,255,.12),transparent 34%),radial-gradient(ellipse at 88% 27%,rgba(151,88,255,.13),transparent 36%),linear-gradient(125deg,transparent 30%,rgba(83,202,255,.025) 50%,transparent 70%);background-size:100% 100%,100% 100%,260% 260%;animation:brandAura 18s ease-in-out infinite alternate}
+@keyframes brandAura{to{background-position:0 0,0 0,100% 100%}}
+.aurora{filter:blur(85px);opacity:.22}
+.a1{background:#287cff}.a2{background:#9b59ff}
+.topbar{background:rgba(7,8,17,.84);border-bottom:1px solid rgba(126,153,255,.12);box-shadow:0 8px 35px #02030a44}
+.brand{font-size:18px;letter-spacing:2.4px}
+.brandmark{position:relative;border-radius:12px;background:linear-gradient(145deg,#f5f8ff 0%,#7ccaff 22%,#287eff 52%,#845cff 82%,#e4d7ff 100%);border:1px solid #b7dcff;box-shadow:0 0 12px #368eff88,0 0 28px #805cff44,inset 0 1px 2px #fff;font-family:Georgia,serif;text-shadow:0 1px 2px #17335f}
+.brand em{background:linear-gradient(90deg,#b7a0ff,#69caff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.status{border-color:#7185ff35;background:linear-gradient(110deg,#14162b,#111c35);color:#c5c7ff}
+.hero{border-color:#789aff55;background:radial-gradient(ellipse at 88% 10%,#8c55ff35,transparent 40%),radial-gradient(ellipse at 8% 100%,#248fff30,transparent 45%),linear-gradient(135deg,#16172d,#0d1020 55%,#17112a);box-shadow:0 25px 70px #02030b99,inset 0 1px 0 #ffffff18}
+.hero:before{border-color:#a8baff44;box-shadow:0 0 0 24px #9e8aff09,0 0 0 52px #63cfff08,0 0 70px #7a68ff33}
+.eyebrow{color:#a9a4ff}
+.eyebrow:before{background:linear-gradient(90deg,var(--brand-blue),var(--brand-violet));box-shadow:0 0 12px var(--brand-blue)}
+.gradient{background:linear-gradient(100deg,#fff 0%,#9edbff 34%,#bba0ff 72%,#fff 100%);background-size:180% auto;animation:logoShimmer 7s ease-in-out infinite alternate;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+@keyframes logoShimmer{to{background-position:100% center}}
+.primary{color:#080a17;background:linear-gradient(105deg,#d9f5ff,#75baff 42%,#a78aff 100%);box-shadow:0 9px 30px #5a8fff35,inset 0 1px 0 #fff}
+.secondary{border-color:#8d8bff30;color:#e9e8ff;background:linear-gradient(145deg,#1b1b35,#111426);box-shadow:inset 0 1px 0 #ffffff0c}
+.secondary:hover{border-color:#72caff88;background:linear-gradient(145deg,#20264a,#171a32)}
+.stat,.service,.panel,.order{border-color:#8294ff25;background:linear-gradient(145deg,rgba(24,25,47,.96),rgba(12,14,28,.97));box-shadow:0 15px 38px #02030b66,inset 0 1px 0 #ffffff0a}
+.stat strong{background:linear-gradient(90deg,#fff,#9dd8ff 55%,#c5a9ff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.service{transition:transform .28s cubic-bezier(.2,.8,.2,1),border-color .28s,box-shadow .28s}
+.service:before{background:radial-gradient(circle at 90% 0%,#8e69ff20,transparent 48%)}
+.serviceart{background:radial-gradient(circle at 50% 40%,#38418a,#1b2348 58%,#111426);border-color:#9c9aff30}
+.serviceart:before,.serviceart:after{border-color:#a7baff55}
+.glyph{color:#e7e4ff;filter:drop-shadow(0 0 12px #7e8dff)}
+.category{color:#9bbcff}
+.price{color:#d7d4ff}
+.field{border-color:#8295ff2b;background:#0a0c19;color:#f4f4ff}
+.field:focus{border-color:#8f83ff;box-shadow:0 0 0 3px #8b75ff22}
+.badge{border-color:#9b83ff55;color:#d4c4ff;background:#9275ff18}
+.empty{border-color:#8d8bff44;background:#111326;color:#a9aec8}
+.nav{padding:8px 9px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #8a8bff26;background:rgba(7,8,18,.94);box-shadow:0 -14px 44px #02030b99;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.navinner{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:4px;width:min(100%,620px);overflow:visible!important;scroll-snap-type:none!important}
+.navbtn{width:100%;min-width:0!important;min-height:58px;flex:none!important;gap:4px;padding:5px 2px;border-radius:15px;font-size:9px;white-space:nowrap;overflow:hidden}
+.navbtn .ico{font-size:20px}
+.navbtn.active{color:#f5f0ff;border-color:#9a83ff35;background:linear-gradient(145deg,#648cff25,#a36dff17);box-shadow:inset 0 1px 0 #ffffff12,0 0 20px #795eff12}
+.navbtn.active:before{top:-8px;left:32%;right:32%;height:2px;background:linear-gradient(90deg,#56c9ff,#a17aff);box-shadow:0 0 13px #8b8aff}
+.navbtn.active .ico{color:#b9caff;text-shadow:0 0 12px #8c8cff;transform:translateY(-1px) scale(1.06)}
+.more-menu{position:fixed;inset:0;z-index:65;display:flex;align-items:flex-end;justify-content:center;visibility:hidden;pointer-events:none}
+.more-menu.open{visibility:visible;pointer-events:auto}
+.more-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:#02030bd9;opacity:0;transition:opacity .25s;backdrop-filter:blur(7px)}
+.more-menu.open .more-backdrop{opacity:1}
+.more-sheet{position:relative;width:min(100%,620px);padding:12px 18px calc(22px + env(safe-area-inset-bottom));border:1px solid #9d8aff3d;border-bottom:0;border-radius:28px 28px 0 0;background:radial-gradient(ellipse at 90% 0%,#8a68ff22,transparent 44%),linear-gradient(145deg,#191a32,#0b0d1b 78%);box-shadow:0 -22px 70px #000b;transform:translateY(35px);opacity:.7;transition:transform .34s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.more-menu.open .more-sheet{transform:translateY(0);opacity:1}
+.sheet-handle{width:42px;height:4px;margin:0 auto 18px;border-radius:8px;background:#777b9b88}
+.sheet-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}
+.sheet-heading h2{margin:6px 0 0;font-size:22px;letter-spacing:-.7px}
+.sheet-x{width:36px;height:36px;border:1px solid #9992ff33;border-radius:12px;color:#e8e3ff;background:#ffffff09;font-size:23px}
+.more-grid{display:grid;gap:10px}
+.more-item{display:flex;align-items:center;gap:13px;width:100%;min-height:68px;padding:11px 13px;border:1px solid #8c91ff25;border-radius:17px;color:#f3f2ff;background:linear-gradient(110deg,#ffffff09,#7c70ff0b);text-align:left}
+.more-item:active{transform:scale(.985)}
+.more-icon{display:grid;place-items:center;width:42px;height:42px;flex:none;border:1px solid #9c8cff45;border-radius:14px;color:#b9caff;background:linear-gradient(145deg,#6a8cff30,#a16fff25);font-size:20px}
+.more-item span:nth-child(2){display:grid;gap:4px;flex:1}
+.more-item b{font-size:13px}
+.more-item small{color:#9399b8;font-size:10px}
+.more-item i{color:#a6a5ff;font-style:normal}
+.owner-item{border-color:#a27bff55;background:linear-gradient(110deg,#7c5aff1c,#489dff0d)}
+.sheet-foot{margin:17px 0 0;color:#646b8c;font-size:9px;font-weight:800;letter-spacing:2px;text-align:center}
+.toast{border-color:#9188ff55;background:#14162a}
+@media(max-width:360px){.navbtn{font-size:8px}.navbtn .ico{font-size:18px}.brand{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.more-sheet,.more-backdrop{transition:none!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">S</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -547,9 +612,21 @@ body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,bod
 <div class="panel"><div class="eyebrow">NEW SERVICE</div><input id="pt" class="field" placeholder="Название услуги"><input id="pp" class="field" placeholder="Цена"><input id="pc" class="field" placeholder="Категория"><textarea id="pd" class="field" placeholder="Описание"></textarea><label class="muted">Фото услуги — можно выбрать несколько</label><input id="newPhotos" class="field" type="file" accept="image/jpeg,image/png,image/webp" multiple><button class="primary wide" data-action="add-product">＋ Добавить услугу</button></div>
 <div class="sectionhead"><h2>Заказы клиентов</h2></div><div id="adminorders"></div><div class="sectionhead"><h2>Управление каталогом</h2></div><div id="adminproducts"></div><div class="sectionhead"><h2>Управление ролями</h2></div><div class="panel"><p class="muted">Назначай сотрудников по их Telegram ID. Владелец не может быть заменён.</p><input id="roleUserId" class="field" inputmode="numeric" placeholder="Telegram ID сотрудника"><select id="roleSelect" class="field"><option value="deputy">Заместитель — заказы и поддержка</option><option value="support">Поддержка — обращения клиентов</option><option value="moderator">Модератор — модерация</option></select><button class="primary wide" data-action="grant-role">Назначить роль</button></div><div id="roleList"></div></section>
 </main>
-<nav class="nav"><div class="navinner">
-<button class="navbtn active" data-go="home"><span class="ico">⌂</span>Главная</button><button class="navbtn" data-go="shop"><span class="ico">◇</span>Каталог</button><button class="navbtn" data-go="profile"><span class="ico">◉</span>Профиль</button><button class="navbtn" data-go="orders"><span class="ico">▤</span>Заказы</button><button class="navbtn" data-go="support"><span class="ico">?</span>Поддержка</button><button class="navbtn" id="staffNav" data-go="staff" hidden><span class="ico">♧</span>Команда</button><button class="navbtn" id="adminNav" data-go="admin" hidden><span class="ico">⌘</span>Владелец</button>
+<nav class="nav" aria-label="Основная навигация"><div class="navinner">
+<button class="navbtn active" data-go="home"><span class="ico">⌂</span><span>Главная</span></button>
+<button class="navbtn" data-go="shop"><span class="ico">◇</span><span>Каталог</span></button>
+<button class="navbtn" data-go="orders"><span class="ico">▤</span><span>Заказы</span></button>
+<button class="navbtn" data-go="support"><span class="ico">✧</span><span>Поддержка</span></button>
+<button class="navbtn" id="moreNav" data-action="toggle-more"><span class="ico">•••</span><span>Ещё</span></button>
 </div></nav>
+<div id="moreMenu" class="more-menu" aria-hidden="true">
+<button class="more-backdrop" data-action="close-more" aria-label="Закрыть меню"></button>
+<div class="more-sheet"><div class="sheet-handle"></div><div class="sheet-heading"><div><span class="eyebrow">STUDIO DLC / SPACE</span><h2>Твоё пространство</h2></div><button class="sheet-x" data-action="close-more">×</button></div>
+<div class="more-grid">
+<button class="more-item" data-go="profile"><span class="more-icon">◉</span><span><b>Мой профиль</b><small>Аккаунт и баланс</small></span><i>↗</i></button>
+<button class="more-item" id="staffNav" data-go="staff" hidden><span class="more-icon">♧</span><span><b>Команда</b><small>Обращения и работа</small></span><i>↗</i></button>
+<button class="more-item owner-item" id="adminNav" data-go="admin" hidden><span class="more-icon">⌘</span><span><b>Панель владельца</b><small>Управление студией</small></span><i>↗</i></button>
+</div><p class="sheet-foot">STUDIO DLC · DIGITAL ATELIER</p></div></div>
 <div id="orderModal" class="modalback"><div class="modal"><button class="modalclose" data-action="close-modal">×</button><div class="eyebrow">PROJECT REQUEST</div><h2 id="modalTitle">Услуга</h2><p id="modalDesc" class="muted"></p><textarea id="orderComment" class="field" rows="3" placeholder="Опиши задачу, пожелания и сроки..."></textarea><button class="primary wide" data-action="create-order">Создать заявку и перейти к оплате ↗</button><p class="muted">После оплаты прикрепи скриншот в разделе «Заказы». Платёж проверяется владельцем вручную.</p></div></div>
 <div id="toast" class="toast"></div>
 <script>
@@ -561,25 +638,27 @@ let products=[],selected=null,isOwner=false,isStaff=false,staffRole="user",subsc
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.headers||{});const r=await fetch(path,Object.assign({},opt,{headers:h}));let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.detail||('Ошибка '+r.status));return d}
+function closeMore(){const m=$('moreMenu');if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true')}const n=$('moreNav');if(n)n.classList.remove('active')}
+function toggleMore(){const m=$('moreMenu');if(!m)return;const open=!m.classList.contains('open');m.classList.toggle('open',open);m.setAttribute('aria-hidden',String(!open));$('moreNav').classList.toggle('active',open);if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
 function go(v){
  if(v==='admin'&&!isOwner){toast('Нет доступа');return}
  if(v==='staff'&&!isStaff){toast('Нет доступа');return}
  const active=document.getElementById(v);if(!active)return;
+ closeMore();
  const previous=document.querySelector('.view.active');
- const order=['home','shop','profile','orders','support','staff','admin'];
+ const order=['home','shop','orders','support','profile','staff','admin'];
  const from=previous?order.indexOf(previous.id):-1,to=order.indexOf(v);
  const direction=(from<0||to>=from)?'page-left':'page-right';
  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active','page-left','page-right'));
  active.hidden=false;active.classList.add('active',direction);
- document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));
+ document.querySelectorAll('.navbtn[data-go]').forEach(x=>x.classList.toggle('active',x.dataset.go===v));
+ const moreActive=['profile','staff','admin'].includes(v);
+ $('moreNav').classList.toggle('active',moreActive);
  if(v==='profile')loadProfile();
  if(v==='orders')loadOrders();
  if(v==='support')loadMyTickets();
  if(v==='staff')loadStaffTickets();
  if(v==='admin'){loadAdmin();loadRoles()}
- const navButton=document.querySelector('.navbtn[data-go="'+v+'"]');
- const navInner=document.querySelector('.navinner');
- if(navButton&&navInner){const target=navButton.offsetLeft-navInner.clientWidth/2+navButton.offsetWidth/2;navInner.scrollTo({left:Math.max(0,target),behavior:'smooth'})}
  window.scrollTo({top:0,behavior:'instant'});
  if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();
 }
@@ -638,7 +717,7 @@ async function setStatus(id,status){try{await api('/api/admin/orders/'+id+'/stat
 async function receiptView(id){try{const x=await api('/api/admin/orders/'+id+'/receipt');const w=window.open();if(w)w.document.write('<title>Чек заказа #'+id+'</title><body style="margin:0;background:#111;display:grid;place-items:center"><img style="max-width:100%;max-height:100vh" src="data:'+x.type+';base64,'+x.data+'"></body>');else toast('Разреши всплывающие окна для просмотра чека')}catch(e){toast(e.message)}}
 async function editProduct(id){const p=products.find(x=>Number(x.id)===Number(id));if(!p)return;const title=prompt('Название услуги',p.title);if(title===null)return;const price=prompt('Цена',p.price),description=prompt('Описание',p.description),category=prompt('Категория',p.category);try{await api('/api/admin/products/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,price,description,category,active:true})});await loadProducts();loadAdmin();toast('Услуга обновлена')}catch(e){toast(e.message)}}
 async function deleteProduct(id){if(!confirm('Удалить услугу из каталога?'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});await loadProducts();loadAdmin();toast('Услуга удалена')}catch(e){toast(e.message)}}
-function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
+function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='toggle-more')toggleMore();else if(a==='close-more')closeMore();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
 document.addEventListener('click',e=>{const t=e.target instanceof Element?e.target:null;if(!t)return;const b=t.closest('button');if(!b)return;routeFromButton(b)});
 document.addEventListener('touchstart',e=>{const g=e.target.closest('.gallery');if(g)g.dataset.touchx=e.touches[0].clientX},{passive:true});document.addEventListener('touchend',e=>{const g=e.target.closest('.gallery');if(!g||g.dataset.touchx===undefined)return;const dx=e.changedTouches[0].clientX-Number(g.dataset.touchx);delete g.dataset.touchx;if(Math.abs(dx)>35){const pid=Number(g.dataset.gallery);paintGallery(g,pid,(Number(g.dataset.index)||0)+(dx<0?1:-1))}},{passive:true});
 function bindMotion(){const obs=('IntersectionObserver'in window)?new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}}),{threshold:.08}):null;document.querySelectorAll('.hero,.stats,.sectionhead,.service,.panel,.order').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(Math.min(i%5,4)*55)+'ms';if(obs)obs.observe(el);else el.classList.add('visible')})}
