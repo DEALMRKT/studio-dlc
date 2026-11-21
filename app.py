@@ -524,6 +524,31 @@ button:active{transform:scale(.975)}
 html{scroll-behavior:auto!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .view.active .reveal{opacity:1!important;transform:none!important;transition:opacity .22s ease,transform .22s ease}
+
+/* STUDIO DLC mobile polish: stable header, smooth page swipe, compact GPU work */
+.topbar{position:sticky!important;top:0!important;z-index:12!important;min-height:62px!important;height:auto!important;padding:10px 17px!important;margin:0 -17px 18px!important;background:#090811!important;background-image:linear-gradient(180deg,#090811 85%,rgba(9,8,17,.98))!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.view{will-change:opacity,transform}
+.view.active{animation:studioPageIn .22s cubic-bezier(.2,.75,.2,1) both!important}
+@keyframes studioPageIn{from{opacity:.55;transform:translate3d(0,10px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.view.active.page-left{animation:studioPageLeft .24s cubic-bezier(.2,.75,.2,1) both!important}
+.view.active.page-right{animation:studioPageRight .24s cubic-bezier(.2,.75,.2,1) both!important}
+@keyframes studioPageLeft{from{opacity:.5;transform:translate3d(-18px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes studioPageRight{from{opacity:.5;transform:translate3d(18px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.nav{overflow:hidden!important;padding:8px 0 calc(8px + env(safe-area-inset-bottom))!important}
+.navinner{justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;gap:7px!important;padding:0 10px!important;scroll-snap-type:x mandatory!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
+.navinner::-webkit-scrollbar{display:none!important}
+.navbtn{flex:0 0 68px!important;min-width:68px!important;min-height:58px!important;border-radius:15px!important;scroll-snap-align:center!important;gap:4px!important;font-size:10px!important;white-space:nowrap!important}
+.navbtn.active{background:linear-gradient(145deg,rgba(167,139,250,.17),rgba(118,228,223,.07))!important;box-shadow:inset 0 0 0 1px rgba(190,169,255,.12)!important}
+.navbtn.active .ico{transform:translateY(-1px)!important}
+.order{content-visibility:auto;contain-intrinsic-size:auto 180px}
+@media(max-width:600px){
+ .shell{padding-left:14px!important;padding-right:14px!important;padding-bottom:125px!important}
+ .topbar{margin-left:-14px!important;margin-right:-14px!important;padding-left:14px!important;padding-right:14px!important}
+ .service,.order,.panel{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .aurora{filter:blur(55px)!important;opacity:.12!important}
+ .view.active{filter:none!important}
+}
+@media(prefers-reduced-motion:reduce){.view.active,.view.active.page-left,.view.active.page-right{animation:none!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">S</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -557,7 +582,29 @@ let products=[],selected=null,isOwner=false,isStaff=false,staffRole="user",subsc
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.headers||{});const r=await fetch(path,Object.assign({},opt,{headers:h}));let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.detail||('Ошибка '+r.status));return d}
-function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='staff'&&!isStaff){toast('Нет доступа');return}if(v==='admin')$('admin').hidden=false;if(v==='staff')$('staff').hidden=false;if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));const active=document.getElementById(v);if(active)active.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));if(v==='orders')loadOrders();if(v==='support')loadMyTickets();if(v==='staff')loadStaffTickets();if(v==='admin'){active.querySelectorAll('.reveal').forEach(el=>{el.style.opacity='1';el.style.transform='none'});loadAdmin();loadRoles()}window.scrollTo({top:0,behavior:'instant'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
+function go(v){
+ if(v==='admin'&&!isOwner){toast('Нет доступа');return}
+ if(v==='staff'&&!isStaff){toast('Нет доступа');return}
+ const order=['home','shop','profile','orders','support','staff','admin'].filter(x=>x!=='staff'||isStaff).filter(x=>x!=='admin'||isOwner);
+ const current=document.querySelector('.view.active');
+ const from=current?order.indexOf(current.id):-1,to=order.indexOf(v);
+ const direction=(from<0||to>=from)?'page-left':'page-right';
+ document.querySelectorAll('.view').forEach(x=>{x.classList.remove('active','page-left','page-right')});
+ const active=document.getElementById(v);if(!active)return;
+ active.classList.add('active',direction);
+ if(v==='admin')$('admin').hidden=false;
+ if(v==='staff')$('staff').hidden=false;
+ document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));
+ if(v==='profile')loadProfile();
+ if(v==='orders')loadOrders();
+ if(v==='support')loadMyTickets();
+ if(v==='staff')loadStaffTickets();
+ if(v==='admin'){loadAdmin();loadRoles()}
+ const navButton=document.querySelector('.navbtn[data-go="'+v+'"]');
+ if(navButton&&navButton.scrollIntoView)navButton.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();
+}
 function iconFor(category){const s=(category||'').toLowerCase();if(s.includes('сайт'))return '⌘';if(s.includes('форум'))return '◈';if(s.includes('дизайн'))return '✳';return '✦'}
 function card(p){return '<article class="service"><div class="gallery" data-gallery="'+p.id+'"><span class="glyph">'+iconFor(p.category)+'</span></div><div class="category">'+esc(p.category)+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><div class="price">'+esc(p.price)+'</div><button class="secondary" data-order="'+p.id+'">Подробнее <span>↗</span></button></article>'}
 function renderProducts(){ $('catalog').innerHTML=products.map(card).join('')||'<div class="empty">Скоро здесь появятся услуги.</div>'; $('featured').innerHTML=products.slice(0,2).map(card).join('')||'<div class="empty">Каталог обновляется.</div>';const nodes=document.querySelectorAll('[data-gallery]');if('IntersectionObserver'in window){const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){loadProductImages(Number(e.target.dataset.gallery));io.unobserve(e.target)}}),{rootMargin:'180px'});nodes.forEach(n=>io.observe(n))}else{products.forEach(p=>loadProductImages(p.id))}}
@@ -652,6 +699,11 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('error',e=>{if(e.message)toast('Ошибка интерфейса: '+e.message.slice(0,100))});
 
 $('orderModal').addEventListener('click',e=>{if(e.target===$('orderModal'))closeModal()});
+
+let swipeStart=null;
+document.querySelector('.shell').addEventListener('touchstart',e=>{if(e.touches.length!==1||e.target.closest('input,textarea,select,button,.gallery,.modal,.nav')){swipeStart=null;return}swipeStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+document.querySelector('.shell').addEventListener('touchend',e=>{if(!swipeStart||!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-swipeStart.x,dy=e.changedTouches[0].clientY-swipeStart.y;swipeStart=null;if(Math.abs(dx)<65||Math.abs(dy)>55||Math.abs(dx)<Math.abs(dy)*1.25)return;const tabs=['home','shop','profile','orders','support'];if(isStaff)tabs.push('staff');if(isOwner)tabs.push('admin');const active=document.querySelector('.view.active');const i=active?tabs.indexOf(active.id):-1;const next=tabs[i+(dx<0?1:-1)];if(next)go(next)},{passive:true});
+
 async function boot(){
  if(!tg||!tg.initData){
   document.body.classList.add('locked');
