@@ -241,6 +241,45 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;bac
 .toast{position:fixed;z-index:30;left:50%;bottom:100px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#262137;border:1px solid #ffffff20;color:#fff;border-radius:13px;padding:12px 16px;font-size:12px;box-shadow:0 12px 35px #0008;transition:.25s;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(min-width:650px){.shell{padding-top:28px}.hero{padding:39px;min-height:350px}.grid{gap:15px}.service{padding:18px}.serviceart{height:135px}.modalback{align-items:center}.modal{border-radius:25px}}
 @media(max-width:370px){.shell{padding-left:12px;padding-right:12px}.hero{padding:22px 18px}.grid{gap:8px}.service{padding:11px}.navbtn{min-width:48px;padding-inline:4px}}
+/* cinematic motion refresh */
+:root{--bg:#070710;--panel:#11111d;--violet:#b7a0ff;--cyan:#75f0df;--line:rgba(255,255,255,.11)}
+html{background:#070710;scroll-padding-top:20px}body{background:#070710;overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}
+body:before{background:radial-gradient(ellipse at 15% 0%,rgba(123,79,230,.30),transparent 38%),radial-gradient(ellipse at 100% 35%,rgba(40,204,192,.19),transparent 34%),radial-gradient(ellipse at 45% 100%,rgba(83,61,145,.15),transparent 38%),linear-gradient(180deg,#090813 0%,#070710 65%,#0b0b16 100%)}
+.aurora{width:440px;height:440px;filter:blur(105px);opacity:.24;mix-blend-mode:screen}.a1{animation:auroraDrift 16s ease-in-out infinite alternate}.a2{animation:auroraDrift 19s ease-in-out -7s infinite alternate-reverse}
+@keyframes auroraDrift{0%{transform:translate3d(-12px,-20px,0) scale(.82)}50%{transform:translate3d(70px,35px,0) scale(1.14)}100%{transform:translate3d(15px,100px,0) scale(.96)}}
+.shell{padding-top:max(18px,env(safe-area-inset-top));padding-bottom:calc(34px + env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:8;margin:0 -17px 20px;padding:9px 17px;background:linear-gradient(180deg,rgba(8,8,17,.94),rgba(8,8,17,.72));backdrop-filter:blur(20px);border-bottom:1px solid #ffffff0b}
+.brandmark{position:relative;overflow:hidden;box-shadow:0 0 0 1px #ffffff20,0 7px 30px #9475ff55}.brandmark:after{content:"";position:absolute;inset:-60%;background:linear-gradient(110deg,transparent 35%,#ffffff99 50%,transparent 65%);transform:translateX(-70%) rotate(15deg);animation:markSweep 5s ease-in-out infinite}
+@keyframes markSweep{0%,55%{transform:translateX(-80%) rotate(15deg)}85%,100%{transform:translateX(80%) rotate(15deg)}}
+.hero{min-height:350px;padding:clamp(26px,6vw,42px);border-radius:30px;background:linear-gradient(125deg,rgba(37,28,67,.97),rgba(15,22,38,.96) 56%,rgba(10,43,48,.94));box-shadow:0 28px 100px #0009,inset 0 1px 0 #ffffff20;isolation:isolate}
+.hero:before{width:290px;height:290px;right:-55px;top:-115px;border-color:#d8cbff55;box-shadow:0 0 0 1px #ffffff09,0 0 0 34px #ffffff07,0 0 0 70px #ffffff04,0 0 95px #a78bfa55}
+.hero:after{width:230px;height:230px;right:0;bottom:-160px;background:#64f4df26;filter:blur(35px)}
+.hero h1{font-size:clamp(42px,10vw,68px);line-height:.94;letter-spacing:-3px;text-shadow:0 8px 40px #0006;animation:heroTextIn .85s cubic-bezier(.16,1,.3,1) both}
+@keyframes heroTextIn{from{opacity:0;transform:translateY(24px);filter:blur(9px)}to{opacity:1;transform:none;filter:blur(0)}}
+.hero p{font-size:14px;max-width:400px;color:#c1bdd0}.eyebrow{letter-spacing:2.2px}
+.primary{position:relative;overflow:hidden;isolation:isolate;min-height:46px;border-radius:15px;background:linear-gradient(105deg,#d6c9ff,#a78bfa 48%,#80eee0);box-shadow:0 9px 30px #9c7af644,inset 0 1px 0 #ffffffaa}
+.primary:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(110deg,transparent 20%,#ffffff88 48%,transparent 72%);transform:translateX(-120%);transition:transform .65s}.primary:active:before,.primary:hover:before{transform:translateX(120%)}
+.secondary{min-height:43px;background:linear-gradient(135deg,#ffffff0d,#ffffff04);border-color:#ffffff18;box-shadow:inset 0 1px 0 #ffffff0c}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none}button:focus-visible{outline:2px solid #bba8ff;outline-offset:3px}
+.grid{gap:13px}.service{border-radius:23px;padding:16px;background:linear-gradient(145deg,rgba(30,27,47,.96),rgba(13,14,24,.98));box-shadow:0 12px 35px #0003,inset 0 1px 0 #ffffff0b;transform:translateZ(0)}
+.service:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,#ffffff0c,transparent 35%,transparent 70%,#a78bfa0b);opacity:.7}
+.serviceart{height:124px;border:1px solid #ffffff10;background:radial-gradient(circle at 50% 45%,#58438b 0%,#292343 38%,#142a36 100%)}
+.serviceart:before{width:116px;height:116px;animation:artOrbit 18s linear infinite}.serviceart:after{animation:artOrbit 12s linear infinite reverse}
+@keyframes artOrbit{to{transform:rotate(360deg)}}.glyph{font-size:39px;filter:drop-shadow(0 0 18px #c7aaffaa)}.service h3{font-size:16px}.service .secondary{position:relative;z-index:2}
+.sectionhead{margin-top:34px}.sectionhead h2{font-size:23px;letter-spacing:-.8px}
+.stat{background:linear-gradient(145deg,#ffffff0b,#ffffff03);border-color:#ffffff12;box-shadow:inset 0 1px 0 #ffffff0a}
+.panel,.order{background:linear-gradient(145deg,#19182aee,#10101bee);box-shadow:0 12px 35px #0002,inset 0 1px 0 #ffffff0a}
+.field{font-size:16px;min-height:46px}
+.nav{padding:10px 8px calc(10px + env(safe-area-inset-bottom));background:rgba(8,8,16,.91);border-top:1px solid #ffffff16;box-shadow:0 -12px 40px #0005}.navinner{gap:3px}
+.navbtn{position:relative;min-width:57px;min-height:49px;border-radius:13px;font-size:10px;transition:color .2s,background .25s,transform .25s}.navbtn.active{background:linear-gradient(145deg,#b69aff20,#75e9df0b);color:#eee7ff}
+.navbtn.active:before{content:"";position:absolute;top:-10px;left:35%;right:35%;height:2px;border-radius:9px;background:linear-gradient(90deg,#b69aff,#75e9df);box-shadow:0 0 12px #b69aff}.navbtn .ico{font-size:21px;transition:transform .25s}.navbtn.active .ico{transform:translateY(-2px) scale(1.08)}
+.modalback{padding:12px 12px calc(12px + env(safe-area-inset-bottom))}.modal{border-radius:27px 27px 20px 20px;background:linear-gradient(145deg,#25203a,#10101b);border-color:#c2aaff45}
+.toast{bottom:calc(100px + env(safe-area-inset-bottom));backdrop-filter:blur(18px)}
+.view.active{animation:pageIn .42s cubic-bezier(.2,.75,.2,1) both}@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.75,.2,1)}.reveal.visible{opacity:1;transform:none}
+@media(hover:hover){.service:hover{transform:translateY(-6px) scale(1.012);border-color:#b69aff66;box-shadow:0 20px 50px #0007}.navbtn:hover{background:#ffffff0b;color:#fff}}
+@media(max-width:390px){.navbtn{min-width:49px;font-size:9px}.navbtn .ico{font-size:19px}.hero{min-height:330px}.serviceart{height:105px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">✳</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -290,10 +329,14 @@ async function setStatus(id,status){try{await api('/api/admin/orders/'+id+'/stat
 async function receiptView(id){try{const x=await api('/api/admin/orders/'+id+'/receipt');const w=window.open();if(w)w.document.write('<title>Чек заказа #'+id+'</title><body style="margin:0;background:#111;display:grid;place-items:center"><img style="max-width:100%;max-height:100vh" src="data:'+x.type+';base64,'+x.data+'"></body>');else toast('Разреши всплывающие окна для просмотра чека')}catch(e){toast(e.message)}}
 async function editProduct(id){const p=products.find(x=>Number(x.id)===Number(id));if(!p)return;const title=prompt('Название услуги',p.title);if(title===null)return;const price=prompt('Цена',p.price),description=prompt('Описание',p.description),category=prompt('Категория',p.category);try{await api('/api/admin/products/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,price,description,category,active:true})});await loadProducts();loadAdmin();toast('Услуга обновлена')}catch(e){toast(e.message)}}
 async function deleteProduct(id){if(!confirm('Удалить услугу из каталога?'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});await loadProducts();loadAdmin();toast('Услуга удалена')}catch(e){toast(e.message)}}
+function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete)}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();routeFromButton(b)},true);
+function bindMotion(){const obs=('IntersectionObserver'in window)?new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}}),{threshold:.08}):null;document.querySelectorAll('.hero,.stats,.sectionhead,.service,.panel,.order').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(Math.min(i%5,4)*55)+'ms';if(obs)obs.observe(el);else el.classList.add('visible')})}
+window.addEventListener('error',e=>{if(e.message)toast('Ошибка интерфейса: '+e.message.slice(0,100))});
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go)go(b.dataset.go);if(b.dataset.order)openOrder(b.dataset.order);if(b.dataset.action==='close-modal')closeModal();if(b.dataset.action==='create-order')createOrder();if(b.dataset.action==='send-post')sendPost();if(b.dataset.action==='add-product')addProduct();if(b.dataset.upload)upload(b.dataset.upload);if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);if(b.dataset.receipt)receiptView(b.dataset.receipt);if(b.dataset.edit)editProduct(b.dataset.edit);if(b.dataset.delete)deleteProduct(b.dataset.delete)});
 $('orderModal').addEventListener('click',e=>{if(e.target===$('orderModal'))closeModal()});
 async function boot(){if(!tg||!tg.initData){$('userStatus').textContent='ОТКРОЙ В TELEGRAM';$('gate').hidden=false;$('gate').innerHTML='Открой Mini App через кнопку в Telegram-боте <b>@STUDIO DLC</b>, чтобы авторизоваться. Обычный браузер не передаёт Telegram-подпись.';try{await loadProducts()}catch(e){$('catalog').innerHTML='<div class="empty">Открой приложение из Telegram, чтобы загрузить каталог.</div>'}return}
 try{const s=await api('/api/session');$('userStatus').textContent=s.user.first_name||'WELCOME';isOwner=!!s.owner;subscribed=!!s.subscribed;if(isOwner)$('adminNav').hidden=false;if(!subscribed){$('gate').hidden=false;$('gate').innerHTML='Для доступа подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем перезапусти приложение.';return}await loadProducts()}catch(e){$('gate').hidden=false;$('gate').textContent=e.message;toast(e.message)}}
-boot();
+boot().then(()=>bindMotion()).catch(e=>toast('Не удалось запустить приложение: '+e.message));
 })();
 </script></body></html>"""
