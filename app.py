@@ -600,6 +600,154 @@ body:before{background:linear-gradient(115deg,transparent 20%,#4acbff12 42%,#9b7
 .checkout-provider{background:linear-gradient(120deg,#102f52,#201844);border-color:#59aaff77}
 @media(hover:hover){.panel,.order,.hero{transition:transform .28s ease,box-shadow .28s ease}.panel:hover,.order:hover{transform:translateY(-3px);box-shadow:0 22px 55px #0008,0 0 26px #428cff26}.hero:hover{box-shadow:0 34px 90px #020615cc,0 0 44px #3c83ff38,inset 0 1px #ffffff26}}
 @media(prefers-reduced-motion:reduce){body:before,.hero,.word-dlc,.primary:after{animation:none!important}.panel,.order,.hero{transition:none!important}}
+
+/* ===== STUDIO DLC / AURORA GLASS EDITION ===== */
+:root{
+ --bg:#070b18;--panel:rgba(20,29,54,.54);--panel2:rgba(25,38,70,.48);
+ --line:rgba(190,222,255,.20);--text:#f4f8ff;--muted:#a8bad3;
+ --blue:#69d5ff;--violet:#a88cff;--cyan:#6af5df;--shadow:0 24px 70px rgba(0,0,0,.42)
+}
+html{background:#070b18}
+body{
+ background:
+ radial-gradient(ellipse at 14% 7%,rgba(29,137,255,.28),transparent 34%),
+ radial-gradient(ellipse at 88% 14%,rgba(154,90,255,.24),transparent 33%),
+ radial-gradient(ellipse at 54% 74%,rgba(31,223,207,.11),transparent 38%),
+ radial-gradient(ellipse at 50% 120%,rgba(48,92,183,.2),transparent 42%),
+ linear-gradient(145deg,#070b18 0%,#0b1021 48%,#090d1b 100%);
+ background-attachment:fixed;
+}
+body:before{
+ background:linear-gradient(118deg,transparent 12%,rgba(129,205,255,.055) 38%,rgba(173,135,255,.07) 52%,transparent 78%);
+ background-size:260% 260%;animation:glassAurora 18s ease-in-out infinite alternate;
+}
+@keyframes glassAurora{0%{background-position:0% 20%;opacity:.45}100%{background-position:100% 85%;opacity:1}}
+.aurora{opacity:.22;filter:blur(85px)}
+.topbar{
+ background:rgba(8,13,28,.66);border-bottom:1px solid rgba(201,227,255,.16);
+ box-shadow:0 12px 36px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07);
+ backdrop-filter:blur(28px) saturate(155%);-webkit-backdrop-filter:blur(28px) saturate(155%);
+}
+.brand{align-items:center;filter:drop-shadow(0 4px 16px rgba(85,164,255,.20))}
+.word-studio{color:#f5f9ff;text-shadow:0 0 22px rgba(132,193,255,.25)}
+.word-dlc{
+ background:linear-gradient(105deg,#c7b6ff 0%,#8be4ff 42%,#8effe5 72%,#d8caff 100%);
+ background-size:220% auto;animation:glassLogo 8s linear infinite;
+ background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+@keyframes glassLogo{to{background-position:220% center}}
+.status{
+ border:1px solid rgba(181,219,255,.24);
+ background:linear-gradient(135deg,rgba(132,184,255,.16),rgba(172,133,255,.12));
+ color:#dceeff;box-shadow:inset 0 1px rgba(255,255,255,.12),0 5px 20px rgba(0,0,0,.16);
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.hero{
+ border:1px solid rgba(204,230,255,.26);border-radius:30px;
+ background:
+ radial-gradient(ellipse at 83% 5%,rgba(156,125,255,.28),transparent 43%),
+ radial-gradient(ellipse at 10% 95%,rgba(61,190,255,.22),transparent 48%),
+ linear-gradient(135deg,rgba(49,75,119,.64),rgba(23,32,64,.52) 55%,rgba(48,34,82,.58));
+ box-shadow:0 30px 80px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.24),inset 0 -1px rgba(173,211,255,.08);
+ backdrop-filter:blur(22px) saturate(135%);-webkit-backdrop-filter:blur(22px) saturate(135%);
+}
+.hero:before{
+ width:230px;height:230px;right:-90px;top:-115px;
+ border-color:rgba(222,241,255,.46);
+ box-shadow:0 0 0 23px rgba(255,255,255,.045),0 0 0 49px rgba(255,255,255,.027),0 0 70px rgba(111,191,255,.24);
+}
+.hero:after{background:radial-gradient(circle,rgba(103,211,255,.42),rgba(138,104,255,.16) 42%,transparent 72%);filter:blur(28px);opacity:.8}
+.eyebrow{color:#c6e9ff}
+.eyebrow:before{background:linear-gradient(90deg,#79e5ff,#c2a5ff);box-shadow:0 0 14px rgba(103,213,255,.7)}
+.gradient{
+ background:linear-gradient(100deg,#fff 0%,#c5eaff 34%,#d3c5ff 68%,#a5fff0 100%);
+ background-size:220% auto;animation:glassLogo 9s linear infinite;
+ background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+.hero p{color:#d0dced}
+.primary{
+ color:#071222;border:1px solid rgba(255,255,255,.48);
+ background:linear-gradient(110deg,rgba(157,234,255,.96),rgba(143,174,255,.96) 52%,rgba(207,171,255,.96));
+ box-shadow:0 12px 32px rgba(94,161,255,.27),inset 0 1px rgba(255,255,255,.9),inset 0 -1px rgba(50,87,150,.18);
+}
+.secondary{
+ color:#edf5ff;border:1px solid rgba(191,220,255,.22);
+ background:linear-gradient(135deg,rgba(117,157,211,.17),rgba(127,116,183,.13));
+ box-shadow:inset 0 1px rgba(255,255,255,.12),0 9px 25px rgba(0,0,0,.14);
+ backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px)
+}
+.stat,.service,.panel,.order,.empty{
+ border:1px solid rgba(202,227,255,.19);
+ background:linear-gradient(145deg,rgba(45,62,98,.50),rgba(18,27,49,.58) 62%,rgba(28,28,58,.48));
+ box-shadow:0 18px 48px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.13),inset 0 -1px rgba(170,210,255,.045);
+ backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);
+}
+.stat{border-radius:20px}
+.stat span{color:#b5c6dc}
+.stat strong{background:linear-gradient(100deg,#fff,#a9e5ff 55%,#d3c2ff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.service{border-radius:24px;padding:15px}
+.service:before{background:radial-gradient(circle at 88% 0%,rgba(141,183,255,.17),transparent 52%)}
+.service:after{background:linear-gradient(135deg,rgba(255,255,255,.11),transparent 34%,transparent 68%,rgba(129,214,255,.06))}
+.serviceart{
+ border:1px solid rgba(207,230,255,.22);border-radius:18px;
+ background:radial-gradient(circle at 50% 35%,rgba(130,178,226,.35),rgba(61,80,132,.24) 43%,rgba(12,21,42,.55) 78%);
+ box-shadow:inset 0 1px rgba(255,255,255,.2),0 12px 26px rgba(0,0,0,.17)
+}
+.serviceart:before,.serviceart:after{border-color:rgba(205,231,255,.48);box-shadow:0 0 0 16px rgba(255,255,255,.035),0 0 25px rgba(117,203,255,.17)}
+.glyph{color:#f4fbff;filter:drop-shadow(0 0 13px rgba(124,208,255,.72))}
+.category{color:#b9d8ff}
+.service h3,.order b{color:#f6f9ff}
+.service p,.muted{color:#bdcbe0}
+.price{color:#c7edff}
+.panel{border-radius:24px}
+.field{
+ color:#f4f8ff;border:1px solid rgba(190,220,255,.20);border-radius:15px;
+ background:rgba(5,12,27,.48);box-shadow:inset 0 1px rgba(255,255,255,.045);
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+}
+.field::placeholder{color:#8fa4c1}
+.field:focus{border-color:rgba(119,210,255,.72);box-shadow:0 0 0 3px rgba(101,190,255,.14),0 0 22px rgba(94,174,255,.10)}
+.order{border-radius:22px}
+.badge{border:1px solid rgba(180,217,255,.27);color:#e1f1ff;background:rgba(123,169,236,.13)}
+.empty{border-style:dashed;color:#c2d2e7}
+.post{border-bottom-color:rgba(191,220,255,.13)}
+.post p{color:#eaf2ff}
+.post small{color:#a8bdd8}
+.nav{
+ border-top:1px solid rgba(203,227,255,.17);
+ background:rgba(7,12,26,.72);
+ box-shadow:0 -14px 42px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.06);
+ backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);
+}
+.navbtn{color:#9aacc8}
+.navbtn.active{
+ color:#f5fbff;border:1px solid rgba(173,215,255,.25);
+ background:linear-gradient(140deg,rgba(114,185,255,.19),rgba(173,139,255,.15));
+ box-shadow:inset 0 1px rgba(255,255,255,.16),0 5px 20px rgba(69,139,255,.12)
+}
+.navbtn.active:before{background:linear-gradient(90deg,#7be9ff,#c0a2ff);box-shadow:0 0 14px rgba(114,212,255,.8)}
+.checkout-summary,.checkout-provider{
+ border:1px solid rgba(194,226,255,.26);
+ background:linear-gradient(135deg,rgba(76,131,183,.38),rgba(63,66,126,.32),rgba(111,77,153,.29));
+ box-shadow:inset 0 1px rgba(255,255,255,.14),0 12px 35px rgba(0,0,0,.2);
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.checkout-note{color:#aebfd7}
+@media(hover:hover){
+ .service,.panel,.order,.stat{transition:transform .28s cubic-bezier(.2,.8,.2,1),border-color .28s,box-shadow .28s}
+ .service:hover,.panel:hover,.order:hover{transform:translateY(-3px);border-color:rgba(177,220,255,.36);box-shadow:0 24px 58px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.17)}
+}
+@media(max-width:480px){
+ .shell{padding-left:14px;padding-right:14px}
+ .topbar{margin-left:-14px;margin-right:-14px}
+ .hero{border-radius:25px}
+ .service{padding:12px;border-radius:20px}
+ .serviceart{height:102px}
+}
+@media(prefers-reduced-motion:reduce){
+ body:before,.word-dlc,.gradient,.hero:before{animation:none!important}
+ .service,.panel,.order,.stat{transition:none!important}
+}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="brand-mark" aria-hidden="true"><span>S</span></span><span class="brand-name"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
