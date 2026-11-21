@@ -459,6 +459,39 @@ button{font:inherit;touch-action:manipulation;cursor:pointer;-webkit-user-select
 .view.active{will-change:transform,opacity}
 @media(prefers-reduced-motion:reduce){.hero:before,.hero:after,.primary:before{animation:none!important}}
 
+
+/* Motion system: real reveal, perspective and responsive 3D */
+.reveal{opacity:0;transform:translate3d(0,26px,0) scale(.975);filter:blur(7px);transition:opacity .72s cubic-bezier(.2,.7,.2,1),transform .82s cubic-bezier(.16,1,.3,1),filter .72s ease;transition-delay:var(--reveal-delay,0ms);will-change:opacity,transform}
+.reveal.visible{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+.hero{transform-style:preserve-3d;perspective:1000px;animation:heroBreath 8s ease-in-out infinite}
+@keyframes heroBreath{0%,100%{box-shadow:0 24px 65px #0007,inset 0 1px 0 #ffffff18,0 0 28px #438dff12}50%{box-shadow:0 30px 80px #0009,inset 0 1px 0 #ffffff24,0 0 48px #8d70ff25}}
+.hero:before{animation:heroOrbit 19s linear infinite,ringPulse 5s ease-in-out infinite alternate;transform-origin:center}
+@keyframes heroOrbit{to{rotate:360deg}}
+@keyframes ringPulse{from{opacity:.38;scale:.94}to{opacity:.95;scale:1.08}}
+.hero:after{animation:orbDrift 8s ease-in-out infinite}
+@keyframes orbDrift{0%,100%{transform:translate3d(0,0,0) scale(.92)}50%{transform:translate3d(-15px,-20px,0) scale(1.12)}}
+.service,.hero,.wallet{transform:perspective(1000px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transform-style:preserve-3d;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.service{animation:cardHover 7s ease-in-out infinite;animation-delay:calc(var(--reveal-delay,0ms)*-1)}
+@keyframes cardHover{0%,100%{translate:0 0}50%{translate:0 -3px}}
+.serviceart{isolation:isolate;transform:translateZ(18px);background:radial-gradient(circle at 50% 40%,#6565c9,#242b61 45%,#101426 78%);box-shadow:inset 0 0 28px #7d8bff30,0 12px 28px #0006}
+.serviceart:before{animation:artOrbit 9s linear infinite}
+.serviceart:after{animation:artOrbit 6s linear infinite reverse}
+@keyframes artOrbit{to{rotate:360deg}}
+.glyph{transform:translateZ(26px);animation:glyphFloat 4.2s ease-in-out infinite}
+@keyframes glyphFloat{0%,100%{translate:0 0;filter:drop-shadow(0 0 10px #8e7cff88)}50%{translate:0 -7px;filter:drop-shadow(0 0 20px #69caffcc)}}
+.panel,.order,.stat,.wallet{box-shadow:0 16px 42px #0007,inset 0 1px 0 #ffffff12}
+.wallet{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at var(--wallet-x,90%) var(--wallet-y,0%),#9871ff55,transparent 48%),linear-gradient(125deg,#102b55,#101329 72%);background-size:160% 160%;animation:walletGlow 9s ease-in-out infinite alternate}
+.wallet:after{content:"";position:absolute;z-index:-1;inset:-80% -40%;background:linear-gradient(110deg,transparent 42%,#b8dfff12 49%,#c4aaff22 51%,transparent 58%);transform:translateX(-60%) rotate(12deg);animation:walletSweep 8s ease-in-out infinite}
+@keyframes walletGlow{to{background-position:100% 100%}}
+@keyframes walletSweep{0%,35%{transform:translateX(-60%) rotate(12deg)}85%,100%{transform:translateX(60%) rotate(12deg)}}
+.avatar{animation:avatarLevitate 5s ease-in-out infinite;box-shadow:0 10px 35px #7d78ff44,0 0 0 1px #d7d2ff44,inset 0 1px 0 #ffffffaa}
+@keyframes avatarLevitate{0%,100%{transform:translateY(0) rotateY(-7deg)}50%{transform:translateY(-6px) rotateY(7deg)}}
+.navbtn.active{animation:navActivate .36s cubic-bezier(.16,1,.3,1) both}
+@keyframes navActivate{from{transform:translateY(7px) scale(.94)}to{transform:translateY(0) scale(1)}}
+.primary{isolation:isolate}
+@media(max-width:600px){.hero{animation-duration:10s}.service{animation:none}.reveal{transition-duration:.58s, .68s, .58s}.wallet{animation-duration:11s}}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;filter:none;transform:none;transition:none}.hero,.hero:before,.hero:after,.service,.serviceart:before,.serviceart:after,.glyph,.wallet,.wallet:after,.avatar,.navbtn.active{animation:none!important;translate:none!important}}
+
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -573,7 +606,15 @@ async function deleteProduct(id){if(!confirm('Удалить услугу из �
 function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='toggle-more')toggleMore();else if(a==='close-more')closeMore();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
 document.addEventListener('click',e=>{const t=e.target instanceof Element?e.target:null;if(!t)return;const b=t.closest('button');if(!b)return;routeFromButton(b)});
 document.addEventListener('touchstart',e=>{const g=e.target.closest('.gallery');if(g)g.dataset.touchx=e.touches[0].clientX},{passive:true});document.addEventListener('touchend',e=>{const g=e.target.closest('.gallery');if(!g||g.dataset.touchx===undefined)return;const dx=e.changedTouches[0].clientX-Number(g.dataset.touchx);delete g.dataset.touchx;if(Math.abs(dx)>35){const pid=Number(g.dataset.gallery);paintGallery(g,pid,(Number(g.dataset.index)||0)+(dx<0?1:-1))}},{passive:true});
-function bindMotion(){const obs=('IntersectionObserver'in window)?new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}}),{threshold:.08}):null;document.querySelectorAll('.hero,.stats,.sectionhead,.service,.panel,.order').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(Math.min(i%5,4)*55)+'ms';if(obs)obs.observe(el);else el.classList.add('visible')})}
+function bindMotion(){
+ const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const nodes=document.querySelectorAll('.hero,.stats,.sectionhead,.service,.panel,.order,.access-card');
+ const obs=!reduce&&('IntersectionObserver'in window)?new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}}),{threshold:.08,rootMargin:'0px 0px -5% 0px'}):null;
+ nodes.forEach((el,i)=>{if(el.dataset.motionBound)return;el.dataset.motionBound='1';el.classList.add('reveal');el.style.setProperty('--reveal-delay',Math.min(i%5,4)*65+'ms');if(obs)obs.observe(el);else el.classList.add('visible')});
+ if(!reduce&&window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.service,.hero,.wallet,.profileCard').forEach(el=>{if(el.dataset.tiltBound)return;el.dataset.tiltBound='1';el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.setProperty('--tilt-x',(-y*5).toFixed(2)+'deg');el.style.setProperty('--tilt-y',(x*6).toFixed(2)+'deg')});el.addEventListener('pointerleave',()=>{el.style.setProperty('--tilt-x','0deg');el.style.setProperty('--tilt-y','0deg')})});
+ }
+}
 async function checkSubscription(showMessage){
  const b=$('checkSub'),status=$('subStatus');
  if(b){b.disabled=true;b.classList.add('loading');b.textContent='Проверяем подписку…'}
