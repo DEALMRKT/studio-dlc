@@ -440,6 +440,25 @@ button{font:inherit;touch-action:manipulation;cursor:pointer;-webkit-user-select
 @media(min-width:650px){.shell{padding-top:22px}.hero{min-height:350px;padding:42px}.grid{gap:16px}.service{padding:17px}.serviceart{height:132px}.modalback{align-items:center}.modal{border-radius:25px}}
 @media(max-width:390px){.shell{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px;padding-left:15px;padding-right:15px}.brand{font-size:17px;letter-spacing:2px}.hero{min-height:295px;padding:25px 21px}.hero h1{letter-spacing:-2px}.stats{gap:7px}.stat{padding:12px 9px}.stat strong{font-size:17px}.grid{gap:9px}.service{padding:11px;border-radius:18px}.serviceart{height:100px}.service p{font-size:10px}.navbtn{font-size:8px}.navbtn .ico{font-size:19px}.access-card{align-items:flex-start;flex-direction:column}.access-card button{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* STUDIO DLC · 3D motion layer */
+.hero{perspective:1100px;transform-style:preserve-3d}
+.hero:before{transform-style:preserve-3d;box-shadow:0 0 0 18px #ffffff0b,0 0 0 42px #ffffff08,0 0 0 68px #8e6bff12,0 0 70px #8e6bff55;animation:heroRing 24s linear infinite}
+.hero:after{width:230px;height:230px;right:4%;bottom:-170px;background:radial-gradient(circle at 35% 30%,#d8f5ff,#4c9fff 22%,#7652d5 58%,#17102c 72%);filter:blur(1px);opacity:.20;box-shadow:inset -18px -22px 36px #050817aa,0 0 55px #688aff55;animation:heroFloat 7s ease-in-out infinite}
+@keyframes heroRing{to{transform:rotateX(24deg) rotateY(360deg)}}
+@keyframes heroFloat{0%,100%{transform:translate3d(0,0,0) rotate(-8deg)}50%{transform:translate3d(-10px,-16px,0) rotate(8deg)}}
+.hero h1,.hero p,.hero .primary,.hero .eyebrow{transform:translateZ(24px)}
+.service,.panel,.order,.stat{transform-style:preserve-3d;backface-visibility:hidden}
+.service{perspective:900px;box-shadow:0 18px 40px #0007,inset 0 1px 0 #ffffff12,0 1px 0 #9abaff12}
+.serviceart{transform:translateZ(12px);box-shadow:inset 0 1px 0 #ffffff18,0 12px 24px #02040c55}
+.service .category,.service h3,.service p,.service .price,.service .secondary{transform:translateZ(8px)}
+@media(hover:hover) and (pointer:fine){.service{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s}.service:hover{transform:translateY(-7px) rotateX(2deg) rotateY(-2deg);box-shadow:0 28px 55px #0009,0 0 0 1px #66baff20,inset 0 1px 0 #ffffff18}.panel:hover,.order:hover{border-color:#78aaff42;box-shadow:0 20px 50px #0007,inset 0 1px 0 #ffffff12}}
+.primary:before{content:"";position:absolute;inset:-40% auto -40% -45%;width:35%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,#fff9,transparent);animation:buttonSweep 5.5s ease-in-out infinite}
+@keyframes buttonSweep{0%,65%{left:-45%}100%{left:125%}}
+.navbtn.active{box-shadow:inset 0 1px 0 #ffffff16,0 8px 24px #7b70ff18}
+.view.active{will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){.hero:before,.hero:after,.primary:before{animation:none!important}}
+
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -472,7 +491,7 @@ button{font:inherit;touch-action:manipulation;cursor:pointer;-webkit-user-select
 (function(){
 const tg=window.Telegram&&window.Telegram.WebApp;
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#090811');tg.setBackgroundColor('#090811');}catch(e){}}
-const $=id=>document.getElementById(id), headers=()=>({'X-Telegram-Init-Data':tg&&tg.initData?tg.initData:''});
+const $=id=>document.getElementById(id), setHidden=(id,value)=>{const el=$(id);if(el)el.hidden=value}, headers=()=>({'X-Telegram-Init-Data':tg&&tg.initData?tg.initData:''});
 let products=[],selected=null,isOwner=false,isStaff=false,staffRole="user",subscribed=false,activeTicket=0,activeStaffTicket=0;const imageCache={},imageLoading=new Set();
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -567,7 +586,7 @@ async function checkSubscription(showMessage){
    return false;
   }
   subscribed=true;isOwner=!!s.owner;isStaff=!!s.staff;staffRole=s.role||'user';
-  $('admin').hidden=!isOwner;$('staff').hidden=!isStaff;$('staffShortcut').hidden=!isStaff;
+  setHidden('admin',!isOwner);setHidden('staff',!isStaff);setHidden('staffShortcut',!isStaff);
   document.body.classList.remove('locked');
   $('gate').classList.add('gate-success');
   $('gate').innerHTML='<div class="gate-check">✓</div><div class="gate-kicker">ACCESS GRANTED</div><h2>Добро пожаловать в STUDIO DLC</h2><p>Подписка подтверждена. Открываем каталог услуг…</p>';
@@ -607,7 +626,7 @@ async function boot(){
   const s=await api('/api/session');
   $('userStatus').textContent=s.user.first_name||'WELCOME';
   isOwner=!!s.owner;isStaff=!!s.staff;staffRole=s.role||'user';subscribed=!!s.subscribed;
-  $('adminNav').hidden=!isOwner;$('admin').hidden=!isOwner;$('staffNav').hidden=!isStaff;$('staff').hidden=!isStaff;
+  setHidden('admin',!isOwner);setHidden('staff',!isStaff);
   if(!subscribed){
    document.body.classList.add('locked');
    $('gate').hidden=false;
@@ -615,7 +634,7 @@ async function boot(){
    return;
   }
   document.body.classList.remove('locked');
-  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}
+  if(isOwner)setHidden('admin',false);
   products=s.products||[];renderProducts();
  }catch(e){
   $('gate').hidden=false;
