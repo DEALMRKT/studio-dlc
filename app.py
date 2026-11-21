@@ -1,5 +1,5 @@
 import os, hmac, hashlib, json, time, urllib.parse, base64
-import requests, psycopg2
+import requests, psycopg2, threading
 from psycopg2.extras import RealDictCursor
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -111,11 +111,22 @@ def staff_user(req, allowed=("deputy","support")):
 def require_subscription(u):
  if not subscribed(u['id']): raise HTTPException(403,'Сначала подпишитесь на @studiodlc и нажмите «Проверить подписку».')
  return u
+_membership_cache={}
+_membership_lock=threading.Lock()
 def subscribed(uid):
+ now=time.monotonic()
+ with _membership_lock:
+  cached=_membership_cache.get(int(uid))
+  if cached and now-cached[0]<cached[1]: return cached[2]
  try:
-  x=requests.get("https://api.telegram.org/bot"+TOKEN+"/getChatMember",params={"chat_id":CHANNEL,"user_id":uid},timeout=8).json()
-  return x.get("ok") and x.get("result",{}).get("status") in ("creator","administrator","member")
- except: return False
+  x=requests.get("https://api.telegram.org/bot"+TOKEN+"/getChatMember",params={"chat_id":CHANNEL,"user_id":uid},timeout=4).json()
+  ok=bool(x.get("ok") and x.get("result",{}).get("status") in ("creator","administrator","member"))
+  ttl=45 if ok else 8
+ except:
+  ok=False; ttl=4
+ with _membership_lock:
+  _membership_cache[int(uid)]=(time.monotonic(),ttl,ok)
+ return ok
 def notify(msg):
  if TOKEN and OWNER:
   try: requests.post("https://api.telegram.org/bot"+TOKEN+"/sendMessage",json={"chat_id":OWNER,"text":msg},timeout=8)
@@ -126,7 +137,12 @@ def health(): return {"ok":True}
 def index(): return PAGE
 @app.get("/api/session")
 def session(r:Request):
- u=user(r); role=role_of(u["id"]); return {"user":u,"owner":role=="owner","role":role,"staff":role in ("owner","deputy","support"),"subscribed":subscribed(u["id"])}
+ u=user(r); role=role_of(u["id"]); member=subscribed(u["id"]); items=[]
+ if member:
+  with conn() as c,c.cursor() as q:
+   q.execute("SELECT id,title,description,price,category,image FROM products WHERE active=TRUE ORDER BY id DESC")
+   items=q.fetchall()
+ return {"user":u,"owner":role=="owner","role":role,"staff":role in ("owner","deputy","support"),"subscribed":member,"products":items}
 @app.get("/api/products")
 def products(r:Request):
  require_subscription(user(r))
@@ -526,15 +542,15 @@ html{scroll-behavior:auto!important}
 const tg=window.Telegram&&window.Telegram.WebApp;
 if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('#090811');tg.setBackgroundColor('#090811');}catch(e){}}
 const $=id=>document.getElementById(id), headers=()=>({'X-Telegram-Init-Data':tg&&tg.initData?tg.initData:''});
-let products=[],selected=null,isOwner=false,isStaff=false,staffRole="user",subscribed=false,activeTicket=0,activeStaffTicket=0;const imageCache={};
+let products=[],selected=null,isOwner=false,isStaff=false,staffRole="user",subscribed=false,activeTicket=0,activeStaffTicket=0;const imageCache={},imageLoading=new Set();
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.headers||{});const r=await fetch(path,Object.assign({},opt,{headers:h}));let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.detail||('Ошибка '+r.status));return d}
 function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='staff'&&!isStaff){toast('Нет доступа');return}if(v==='admin')$('admin').hidden=false;if(v==='staff')$('staff').hidden=false;if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));const active=document.getElementById(v);if(active)active.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));if(v==='orders')loadOrders();if(v==='support')loadMyTickets();if(v==='staff')loadStaffTickets();if(v==='admin'){active.querySelectorAll('.reveal').forEach(el=>{el.style.opacity='1';el.style.transform='none'});loadAdmin();loadRoles()}window.scrollTo({top:0,behavior:'instant'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
 function iconFor(category){const s=(category||'').toLowerCase();if(s.includes('сайт'))return '⌘';if(s.includes('форум'))return '◈';if(s.includes('дизайн'))return '✳';return '✦'}
 function card(p){return '<article class="service"><div class="gallery" data-gallery="'+p.id+'"><span class="glyph">'+iconFor(p.category)+'</span></div><div class="category">'+esc(p.category)+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><div class="price">'+esc(p.price)+'</div><button class="secondary" data-order="'+p.id+'">Подробнее <span>↗</span></button></article>'}
-function renderProducts(){ $('catalog').innerHTML=products.map(card).join('')||'<div class="empty">Скоро здесь появятся услуги.</div>'; $('featured').innerHTML=products.slice(0,2).map(card).join('')||'<div class="empty">Каталог обновляется.</div>';products.forEach(p=>loadProductImages(p.id))}
-async function loadProductImages(pid){try{const d=await api('/api/products/'+pid+'/images');imageCache[pid]=d.items||[];document.querySelectorAll('[data-gallery="'+pid+'"]').forEach(el=>paintGallery(el,pid,0));const thumbs=$('thumbs-'+pid);if(thumbs)thumbs.innerHTML=(imageCache[pid]||[]).map(x=>'<span><img class="photo-thumb" src="data:'+x.type+';base64,'+x.data+'"><button class="secondary" data-delphoto="'+pid+':'+x.id+'">×</button></span>').join('')}catch(e){console.warn('gallery load',e)}}function paintGallery(el,pid,index){const arr=imageCache[pid]||[];if(!arr.length){el.innerHTML='<span class="glyph">✦</span>';return}index=(index+arr.length)%arr.length;el.dataset.index=index;const x=arr[index];el.innerHTML='<img src="data:'+x.type+';base64,'+x.data+'">'+(arr.length>1?'<button class="gallery-prev" data-galleryprev="'+pid+'">‹</button><button class="gallery-next" data-gallerynext="'+pid+'">›</button><span class="gallery-count">'+(index+1)+' / '+arr.length+'</span>':'')}async function uploadProductImages(pid,files){if(!files||!files.length)return;const fd=new FormData();Array.from(files).slice(0,8).forEach(f=>fd.append('files',f));await api('/api/admin/products/'+pid+'/images',{method:'POST',body:fd});await loadProductImages(pid)}
+function renderProducts(){ $('catalog').innerHTML=products.map(card).join('')||'<div class="empty">Скоро здесь появятся услуги.</div>'; $('featured').innerHTML=products.slice(0,2).map(card).join('')||'<div class="empty">Каталог обновляется.</div>';const nodes=document.querySelectorAll('[data-gallery]');if('IntersectionObserver'in window){const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){loadProductImages(Number(e.target.dataset.gallery));io.unobserve(e.target)}}),{rootMargin:'180px'});nodes.forEach(n=>io.observe(n))}else{products.forEach(p=>loadProductImages(p.id))}}
+async function loadProductImages(pid){if(imageCache[pid]||imageLoading.has(pid))return;imageLoading.add(pid);try{const d=await api('/api/products/'+pid+'/images');imageCache[pid]=d.items||[];document.querySelectorAll('[data-gallery="'+pid+'"]').forEach(el=>paintGallery(el,pid,0));const thumbs=$('thumbs-'+pid);if(thumbs)thumbs.innerHTML=(imageCache[pid]||[]).map(x=>'<span><img class="photo-thumb" src="data:'+x.type+';base64,'+x.data+'"><button class="secondary" data-delphoto="'+pid+':'+x.id+'">×</button></span>').join('')}catch(e){console.warn('gallery load',e)}finally{imageLoading.delete(pid)}}function paintGallery(el,pid,index){const arr=imageCache[pid]||[];if(!arr.length){el.innerHTML='<span class="glyph">✦</span>';return}index=(index+arr.length)%arr.length;el.dataset.index=index;const x=arr[index];el.innerHTML='<img src="data:'+x.type+';base64,'+x.data+'">'+(arr.length>1?'<button class="gallery-prev" data-galleryprev="'+pid+'">‹</button><button class="gallery-next" data-gallerynext="'+pid+'">›</button><span class="gallery-count">'+(index+1)+' / '+arr.length+'</span>':'')}async function uploadProductImages(pid,files){if(!files||!files.length)return;const fd=new FormData();Array.from(files).slice(0,8).forEach(f=>fd.append('files',f));await api('/api/admin/products/'+pid+'/images',{method:'POST',body:fd});await loadProductImages(pid)}
 async function loadProducts(){const d=await api('/api/products');products=d.items||[];renderProducts()}
 function openOrder(id){selected=products.find(p=>Number(p.id)===Number(id));if(!selected)return; $('modalTitle').textContent=selected.title;$('modalDesc').textContent=(selected.description||'')+' · '+selected.price;$('orderComment').value='';$('orderModal').classList.add('open');if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light')}
 function closeModal(){$('orderModal').classList.remove('open')}
@@ -607,7 +623,7 @@ async function checkSubscription(showMessage){
   $('gate').classList.add('gate-success');
   $('gate').innerHTML='<div class="gate-check">✓</div><div class="gate-kicker">ACCESS GRANTED</div><h2>Добро пожаловать в STUDIO DLC</h2><p>Подписка подтверждена. Открываем каталог услуг…</p>';
   if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}if(isStaff){$('staffNav').hidden=false;$('staff').hidden=false;}
-  await loadProducts();
+  products=s.products||[];renderProducts();
   $('gate').hidden=true;
   if(showMessage)toast('Доступ открыт');
   return true;
@@ -646,7 +662,7 @@ async function boot(){
   }
   document.body.classList.remove('locked');
   if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}
-  await loadProducts();
+  products=s.products||[];renderProducts();
  }catch(e){
   $('gate').hidden=false;
   $('gate').innerHTML='<div class="gate-kicker">CONNECTION</div><h2>Не удалось загрузить приложение</h2><p>'+esc(e.message)+'</p><button class="secondary" onclick="location.reload()">Повторить</button>';
