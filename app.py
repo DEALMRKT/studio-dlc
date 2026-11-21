@@ -601,11 +601,12 @@ async function checkSubscription(showMessage){
    if(showMessage)toast('Подписка пока не найдена');
    return false;
   }
-  subscribed=true;isOwner=!!s.owner;
+  subscribed=true;isOwner=!!s.owner;isStaff=!!s.staff;staffRole=s.role||'user';
+  $('adminNav').hidden=!isOwner;$('admin').hidden=!isOwner;$('staffNav').hidden=!isStaff;$('staff').hidden=!isStaff;
   document.body.classList.remove('locked');
   $('gate').classList.add('gate-success');
   $('gate').innerHTML='<div class="gate-check">✓</div><div class="gate-kicker">ACCESS GRANTED</div><h2>Добро пожаловать в STUDIO DLC</h2><p>Подписка подтверждена. Открываем каталог услуг…</p>';
-  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}
+  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}if(isStaff){$('staffNav').hidden=false;$('staff').hidden=false;}
   await loadProducts();
   $('gate').hidden=true;
   if(showMessage)toast('Доступ открыт');
@@ -635,8 +636,8 @@ async function boot(){
  try{
   const s=await api('/api/session');
   $('userStatus').textContent=s.user.first_name||'WELCOME';
-  isOwner=!!s.owner;subscribed=!!s.subscribed;
-  $('adminNav').hidden=!isOwner;$('admin').hidden=!isOwner;
+  isOwner=!!s.owner;isStaff=!!s.staff;staffRole=s.role||'user';subscribed=!!s.subscribed;
+  $('adminNav').hidden=!isOwner;$('admin').hidden=!isOwner;$('staffNav').hidden=!isStaff;$('staff').hidden=!isStaff;
   if(!subscribed){
    document.body.classList.add('locked');
    $('gate').hidden=false;
