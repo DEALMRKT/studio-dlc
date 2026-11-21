@@ -49,7 +49,7 @@ def configure_telegram():
  if result and result.get("ok"): print("Telegram webhook configured")
  tg_call("setChatMenuButton", {"menu_button": {
   "type": "web_app", "text": "Открыть STUDIO DLC",
-  "web_app": {"url": WEBAPP_URL}
+  "web_app": {"url": WEBAPP_URL + "?v=2"}
  }})
  tg_call("setMyCommands", {"commands": [
   {"command": "start", "description": "Открыть STUDIO DLC"},
