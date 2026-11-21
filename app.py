@@ -492,12 +492,75 @@ button{font:inherit;touch-action:manipulation;cursor:pointer;-webkit-user-select
 @media(max-width:600px){.hero{animation-duration:10s}.service{animation:none}.reveal{transition-duration:.58s, .68s, .58s}.wallet{animation-duration:11s}}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;filter:none;transform:none;transition:none}.hero,.hero:before,.hero:after,.service,.serviceart:before,.serviceart:after,.glyph,.wallet,.wallet:after,.avatar,.navbtn.active{animation:none!important;translate:none!important}}
 
+
+/* STUDIO DLC — graphite / brushed titanium visual identity */
+:root{--bg:#080b10;--panel:#111820;--panel2:#18212b;--line:#a8bfd22b;--text:#f3f6f8;--muted:#9aa8b5;--blue:#7ebbe8;--violet:#9eb5c8;--cyan:#c2d5df;--shadow:0 22px 70px #000b}
+body{background:radial-gradient(ellipse at 50% -20%,#344a5b55,transparent 44%),radial-gradient(ellipse at 100% 60%,#17314a33,transparent 38%),linear-gradient(180deg,#080b10,#0a0e13 55%,#07090d)}
+body:before{background:linear-gradient(115deg,transparent 20%,#d6e7f008 50%,transparent 78%);background-size:240% 240%}
+.a1{background:#4d83a9}.a2{background:#9babb8;opacity:.07}
+.topbar{background:#080b10ed;border-bottom-color:#b8cbd51a;box-shadow:0 12px 38px #0009}
+.brand{align-items:center;gap:12px;letter-spacing:0}
+.brand-name{display:flex;align-items:baseline;gap:9px;font-size:19px;font-weight:950;letter-spacing:3px}
+.brand-mark{position:relative;display:grid;place-items:center;width:43px;height:43px;flex:none;border-radius:13px;background:linear-gradient(145deg,#f4fbff 0%,#8ca9bc 17%,#263b4d 44%,#0a1119 72%,#91b4ca 100%);box-shadow:0 8px 24px #000b,inset 0 1px 1px #fff,inset 0 -2px 5px #000b;transform-style:preserve-3d;isolation:isolate}
+.brand-mark:before{content:"";position:absolute;inset:3px;border:1px solid #d9f1ff80;border-radius:10px;background:linear-gradient(135deg,#203b51,#0c1722 60%,#243f54);box-shadow:inset 0 0 15px #8ecfff25}
+.brand-mark:after{content:"";position:absolute;inset:-5px;border:1px solid #a9d9f04d;border-radius:17px;transform:rotateX(65deg) rotateZ(-22deg);animation:logoHalo 7s linear infinite}
+.brand-mark span{position:relative;z-index:2;font-family:Georgia,serif;font-size:30px;font-weight:900;line-height:1;color:#edf8ff;text-shadow:0 2px 0 #31506a,0 4px 10px #000,0 0 16px #a9ddff8a;transform:translateZ(12px)}
+@keyframes logoHalo{to{transform:rotateX(65deg) rotateZ(338deg)}}
+.word-studio{color:#f1f5f8;text-shadow:0 0 18px #a9d6f018}
+.word-dlc{background:linear-gradient(100deg,#e6f3fa,#8ab7d5 48%,#e5edf2);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.status{border-color:#a9c8dc35;background:linear-gradient(120deg,#17222d,#0c131b);color:#d5e2eb}
+.hero{min-height:390px;border:1px solid #b4cad633;border-radius:8px 34px 8px 34px;background:linear-gradient(125deg,#171f27 0%,#0b1118 52%,#131b23 100%);box-shadow:0 30px 90px #000b,inset 0 1px 0 #ffffff1c;overflow:hidden}
+.hero:before{width:390px;height:210px;right:-100px;top:40px;border:1px solid #d7e9f08a;border-radius:50%;box-shadow:0 0 0 1px #9eb6c51a,0 0 0 13px #ffffff08,0 0 0 30px #ffffff06,0 0 60px #9bc9e01c;transform:rotate(-27deg);animation:heroMetalArc 16s ease-in-out infinite alternate}
+@keyframes heroMetalArc{0%{transform:rotate(-31deg) translate3d(0,0,0) scale(.94)}100%{transform:rotate(-18deg) translate3d(-22px,13px,0) scale(1.06)}}
+.hero:after{width:300px;height:300px;right:-100px;bottom:-210px;background:radial-gradient(circle at 35% 30%,#dceaf0,#63859b 18%,#1b2a37 47%,#0a1018 70%);filter:none;opacity:.42;box-shadow:inset -22px -28px 44px #03070c,0 0 80px #6a9bb52b;animation:metalOrbFloat 9s ease-in-out infinite}
+@keyframes metalOrbFloat{0%,100%{transform:translate3d(0,0,0) rotate(-9deg)}50%{transform:translate3d(-14px,-18px,0) rotate(8deg)}}
+.hero-scene{position:absolute;inset:0;z-index:-1;pointer-events:none;perspective:900px;transform-style:preserve-3d}
+.hero-orbit{position:absolute;right:-7%;top:17%;width:64%;height:36%;border:1px solid #d9e9ef8a;border-radius:50%;box-shadow:0 0 0 1px #fff1,0 0 22px #a7d7f022,inset 0 0 14px #d7eaff10;transform-style:preserve-3d}
+.orbit-one{transform:rotateX(66deg) rotateZ(-22deg);animation:orbitA 19s linear infinite}
+.orbit-two{width:55%;height:55%;right:-1%;top:3%;border-color:#8fb3c86b;transform:rotateY(68deg) rotateZ(28deg);animation:orbitB 24s linear infinite}
+.orbit-three{width:70%;height:22%;right:-9%;top:38%;border-color:#e1edf355;transform:rotateX(76deg) rotateZ(13deg);animation:orbitA 28s linear infinite reverse}
+@keyframes orbitA{to{rotate:0 0 1 360deg}}
+@keyframes orbitB{to{rotate:1 0 0 360deg}}
+.hero-metal-sphere{position:absolute;right:20%;top:26%;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 28% 22%,#fff 0,#cbdbe2 8%,#607c8e 23%,#182a39 53%,#050a10 78%);box-shadow:inset -10px -12px 18px #000c,inset 4px 5px 10px #fff9,0 18px 40px #000a,0 0 30px #9fcce52b;animation:sphereLevitate 7s ease-in-out infinite}
+@keyframes sphereLevitate{0%,100%{transform:translate3d(0,0,0) rotateY(0)}50%{transform:translate3d(-9px,-16px,28px) rotateY(30deg)}}
+.eyebrow{color:#c1d2dc}.eyebrow:before{background:linear-gradient(90deg,#7ebbe8,#dce9ef);box-shadow:0 0 12px #8fc9ec66}
+.hero h1{max-width:560px;font-size:clamp(44px,11vw,76px);letter-spacing:-3px;text-shadow:0 12px 30px #0009}
+.gradient{background:linear-gradient(105deg,#fff 0%,#c7dce8 36%,#80b4d6 68%,#f4f8fa 100%);background-size:200% auto;animation:shimmer 6s ease-in-out infinite alternate}
+.hero p{color:#bdc8d0}
+.primary{color:#071018;background:linear-gradient(115deg,#f3f7f9,#9dbdd0 44%,#e2ebef);box-shadow:0 12px 34px #8bbbd42b,inset 0 1px 0 #fff}
+.primary:before{background:linear-gradient(110deg,transparent 30%,#ffffffb8 50%,transparent 70%);animation:buttonSweep 5s ease-in-out infinite}
+@keyframes buttonSweep{0%,55%{transform:translateX(-140%)}100%{transform:translateX(140%)}}
+.secondary{border-color:#9eb7c333;color:#e8f0f4;background:linear-gradient(145deg,#202c36,#0c131b);box-shadow:inset 0 1px 0 #ffffff18,0 8px 22px #0005}
+.sectionhead small,.category{color:#a9c5d6}
+.stat,.service,.panel,.order,.access-card{border-color:#a8c3d326;background:linear-gradient(145deg,#19232c,#0b1118 78%);box-shadow:0 18px 44px #0008,inset 0 1px 0 #ffffff13}
+.stat strong{background:linear-gradient(90deg,#fff,#a8cadc 65%,#e3edf2);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.service:before{background:radial-gradient(circle at 90% 0%,#9ac7e21c,transparent 52%)}
+.service:after{background:linear-gradient(135deg,#ffffff0c,transparent 38%,transparent 70%,#a9d6ee0a)}
+.serviceart{border-color:#b8d2e044;border-radius:6px 18px 6px 18px;background:radial-gradient(circle at 50% 40%,#526c7d,#1b2b38 58%,#0a1118);box-shadow:inset 0 1px 0 #ffffff24,0 14px 26px #0008}
+.serviceart:before,.serviceart:after{border-color:#d7e9f077;box-shadow:0 0 0 16px #ffffff08,0 0 24px #a7d9f022}
+.glyph{color:#f2f7fa;filter:drop-shadow(0 3px 2px #000) drop-shadow(0 0 12px #a4d7f099)}
+.wallet{border-color:#7eaccb66;background:radial-gradient(circle at 90% 0%,#7ca9c62b,transparent 50%),linear-gradient(135deg,#132b3d,#0d151e)}
+.avatar{color:#eaf4f9;background:linear-gradient(145deg,#f2f8fa,#8eaec1 48%,#253d50);box-shadow:0 12px 35px #0008,inset 0 1px 0 #fff}
+.nav{border-top-color:#a7c6d51e;background:#080d13f4}
+.navbtn{color:#8e9eaa}
+.navbtn.active{color:#f0f6fa;border-color:#9bbfd333;background:linear-gradient(145deg,#9bbfd322,#466d8715);box-shadow:inset 0 1px 0 #ffffff19}
+.navbtn.active:before{background:linear-gradient(90deg,#dceaf0,#6da8cc);box-shadow:0 0 12px #9ccbe2}
+.navbtn.active .ico{color:#c6e1ef}
+.modal,.toast{border-color:#a8c4d544;background:linear-gradient(145deg,#1b2832,#0a1118)}
+.badge{border-color:#9dbcd04d;color:#d9e9f1;background:#8bb7d51a}
+.field{border-color:#91b1c62d;background:#080e14}
+.field:focus{border-color:#9bc8e3;box-shadow:0 0 0 3px #8fc9ed20}
+#gate:not([hidden]){border-color:#b3cedb55;background:radial-gradient(ellipse at 50% -10%,#6e9bb52b,transparent 58%),linear-gradient(145deg,#1b2832,#080e14)}
+.gate-orb{background:linear-gradient(145deg,#f1f7fa,#6c9fbd 55%,#203e53);box-shadow:0 0 34px #8bbbd466}
+@media(max-width:600px){.hero{min-height:360px}.hero-metal-sphere{right:13%;top:28%;width:58px;height:58px}.hero-orbit{right:-25%;width:85%}.brand-name{font-size:17px;letter-spacing:2px}}
+@media(prefers-reduced-motion:reduce){.brand-mark:after,.hero:before,.hero:after,.orbit-one,.orbit-two,.orbit-three,.hero-metal-sphere,.primary:before{animation:none!important}}
+
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
-<header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
+<header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="brand-mark" aria-hidden="true"><span>S</span></span><span class="brand-name"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
 <div id="gate" class="notice" hidden>Чтобы пользоваться сервисом, подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем нажми «Проверить».</div>
 <section id="home" class="view active">
-<div class="hero"><div class="eyebrow">INDEPENDENT DIGITAL STUDIO</div><h1>Создаём<br><span class="gradient">цифровое.</span></h1><p>Сайты, форумы и motion-дизайн. Собираем визуальный опыт, который запоминается.</p><button class="primary" data-go="shop">Исследовать студию <span>↗</span></button></div>
+<div class="hero"><div class="hero-scene" aria-hidden="true"><span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span><span class="hero-orbit orbit-three"></span><span class="hero-metal-sphere"></span></div><div class="eyebrow">INDEPENDENT DIGITAL STUDIO</div><h1>Создаём<br><span class="gradient">цифровое.</span></h1><p>Сайты, форумы и motion-дизайн. Собираем визуальный опыт, который запоминается.</p><button class="primary" data-go="shop">Исследовать студию <span>↗</span></button></div>
 <div class="stats"><div class="stat"><strong>01—03</strong><span>НАПРАВЛЕНИЯ</span></div><div class="stat"><strong>∞</strong><span>ИДЕИ</span></div><div class="stat"><strong>24/7</strong><span>НА СВЯЗИ</span></div></div>
 <div class="sectionhead"><h2>Избранные услуги</h2><small>SELECTED WORK</small></div><div id="featured" class="grid"></div>
 <div class="panel" style="margin-top:17px"><div class="eyebrow">LET'S BUILD</div><h2 style="font:700 22px 'Space Grotesk';margin:10px 0">Есть идея?</h2><p class="muted">Расскажи о проекте — обсудим формат и детали.</p><button class="secondary" data-go="shop">Посмотреть услуги ↗</button></div>
