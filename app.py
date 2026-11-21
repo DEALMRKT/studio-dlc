@@ -549,6 +549,30 @@ html{scroll-behavior:auto!important}
  .view.active{filter:none!important}
 }
 @media(prefers-reduced-motion:reduce){.view.active,.view.active.page-left,.view.active.page-right{animation:none!important}}
+
+/* STUDIO DLC — mobile scrolling and rendering fix */
+html{scroll-behavior:auto!important;scroll-padding-top:76px!important}
+body{min-height:100svh!important;overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important}
+.shell{height:auto!important;min-height:100svh!important;overflow:visible!important;padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
+.view{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;will-change:auto!important;contain:none!important}
+.view.active{display:block!important;overflow:visible!important;transform:none;backface-visibility:hidden}
+#admin,#staff,#orders,#support{padding-bottom:24px!important;overflow:visible!important;max-height:none!important}
+#adminorders,#adminproducts,#myorders,#staffTickets,#myTickets{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;overflow:visible!important;max-height:none!important;height:auto!important}
+.order{content-visibility:visible!important;contain:none!important;min-height:0!important;height:auto!important;overflow:visible!important;break-inside:avoid!important}
+.orderhead{align-items:flex-start!important;flex-wrap:wrap!important}
+.order .secondary,.order .primary{max-width:100%!important;white-space:normal!important}
+.nav{overflow:hidden!important;touch-action:pan-x!important}
+.navinner{width:100%!important;display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;scroll-snap-type:x mandatory!important;scrollbar-width:none!important}
+.navinner::-webkit-scrollbar{display:none!important}
+.navbtn{flex:0 0 70px!important;min-width:70px!important;scroll-snap-align:center!important}
+.topbar{position:sticky!important;top:0!important;z-index:12!important}
+@media(max-width:600px){
+ .shell{padding-left:14px!important;padding-right:14px!important}
+ .sectionhead{scroll-margin-top:82px!important}
+ .order{padding:14px!important;margin:0!important}
+ .orderhead b{line-height:1.45!important}
+}
+@media(prefers-reduced-motion:reduce){.view.active{animation:none!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">S</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -585,15 +609,13 @@ async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.hea
 function go(v){
  if(v==='admin'&&!isOwner){toast('Нет доступа');return}
  if(v==='staff'&&!isStaff){toast('Нет доступа');return}
- const order=['home','shop','profile','orders','support','staff','admin'].filter(x=>x!=='staff'||isStaff).filter(x=>x!=='admin'||isOwner);
- const current=document.querySelector('.view.active');
- const from=current?order.indexOf(current.id):-1,to=order.indexOf(v);
- const direction=(from<0||to>=from)?'page-left':'page-right';
- document.querySelectorAll('.view').forEach(x=>{x.classList.remove('active','page-left','page-right')});
  const active=document.getElementById(v);if(!active)return;
- active.classList.add('active',direction);
- if(v==='admin')$('admin').hidden=false;
- if(v==='staff')$('staff').hidden=false;
+ const previous=document.querySelector('.view.active');
+ const order=['home','shop','profile','orders','support','staff','admin'];
+ const from=previous?order.indexOf(previous.id):-1,to=order.indexOf(v);
+ const direction=(from<0||to>=from)?'page-left':'page-right';
+ document.querySelectorAll('.view').forEach(x=>x.classList.remove('active','page-left','page-right'));
+ active.hidden=false;active.classList.add('active',direction);
  document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));
  if(v==='profile')loadProfile();
  if(v==='orders')loadOrders();
@@ -601,8 +623,9 @@ function go(v){
  if(v==='staff')loadStaffTickets();
  if(v==='admin'){loadAdmin();loadRoles()}
  const navButton=document.querySelector('.navbtn[data-go="'+v+'"]');
- if(navButton&&navButton.scrollIntoView)navButton.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
- window.scrollTo({top:0,behavior:'smooth'});
+ const navInner=document.querySelector('.navinner');
+ if(navButton&&navInner){const target=navButton.offsetLeft-navInner.clientWidth/2+navButton.offsetWidth/2;navInner.scrollTo({left:Math.max(0,target),behavior:'smooth'})}
+ window.scrollTo({top:0,behavior:'instant'});
  if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged();
 }
 function iconFor(category){const s=(category||'').toLowerCase();if(s.includes('сайт'))return '⌘';if(s.includes('форум'))return '◈';if(s.includes('дизайн'))return '✳';return '✦'}
