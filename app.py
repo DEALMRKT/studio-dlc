@@ -196,7 +196,7 @@ async def submit_review(oid:int,r:Request):
   if not q.fetchone(): raise HTTPException(409,"Отзыв по этому заказу уже отправлен.")
  who="@"+u.get("username","") if u.get("username") else (u.get("first_name") or "Клиент")
  import html
- review_text="\\n".join([
+ review_text="\n".join([
   "⭐ <b>НОВЫЙ ОТЗЫВ STUDIO DLC</b>",
   "",
   "<b>Заказ:</b> #"+str(oid),
