@@ -198,6 +198,102 @@ async def post(r:Request):
  if not body or len(body)>2000: raise HTTPException(400,"Текст: 1–2000 символов")
  with conn() as c,c.cursor() as q: q.execute("INSERT INTO forum_posts(user_id,username,body) VALUES(%s,%s,%s)",(u["id"],u.get("username",""),body))
  return {"ok":True}
+
+@app.get("/api/support/tickets")
+def support_tickets(r:Request):
+ u=require_subscription(user(r))
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id,subject,status,created_at,updated_at FROM support_tickets WHERE user_id=%s ORDER BY updated_at DESC",(u["id"],))
+  rows=q.fetchall()
+ return {"items":[dict(x,created_at=x["created_at"].isoformat(),updated_at=x["updated_at"].isoformat()) for x in rows]}
+@app.post("/api/support/tickets")
+async def create_support_ticket(r:Request):
+ u=require_subscription(user(r)); d=await r.json()
+ subject=str(d.get("subject","")).strip()[:120]; body=str(d.get("body","")).strip()
+ if len(subject)<3 or len(body)<3 or len(body)>2000: raise HTTPException(400,"Укажи тему и сообщение (3–2000 символов).")
+ with conn() as c,c.cursor() as q:
+  q.execute("INSERT INTO support_tickets(user_id,username,subject) VALUES(%s,%s,%s) RETURNING id",(u["id"],u.get("username",""),subject)); tid=q.fetchone()["id"]
+  q.execute("INSERT INTO support_messages(ticket_id,sender_id,sender_role,body) VALUES(%s,%s,'user',%s)",(tid,u["id"],body))
+ notify("Новое обращение в поддержку #"+str(tid)+" от "+str(u["id"])+": "+subject)
+ return {"id":tid,"ok":True}
+@app.get("/api/support/tickets/{tid}/messages")
+def support_ticket_messages(tid:int,r:Request):
+ u=require_subscription(user(r))
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT user_id FROM support_tickets WHERE id=%s",(tid,)); t=q.fetchone()
+  if not t or t["user_id"]!=u["id"]: raise HTTPException(404,"Обращение не найдено")
+  q.execute("SELECT sender_role,body,created_at FROM support_messages WHERE ticket_id=%s ORDER BY id",(tid,))
+  rows=q.fetchall()
+ return {"items":[dict(x,created_at=x["created_at"].isoformat()) for x in rows]}
+@app.post("/api/support/tickets/{tid}/messages")
+async def support_user_reply(tid:int,r:Request):
+ u=require_subscription(user(r)); body=str((await r.json()).get("body","")).strip()
+ if len(body)<1 or len(body)>2000: raise HTTPException(400,"Сообщение должно быть до 2000 символов.")
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id FROM support_tickets WHERE id=%s AND user_id=%s AND status='open'",(tid,u["id"]))
+  if not q.fetchone(): raise HTTPException(404,"Открытое обращение не найдено")
+  q.execute("INSERT INTO support_messages(ticket_id,sender_id,sender_role,body) VALUES(%s,%s,'user',%s)",(tid,u["id"],body))
+  q.execute("UPDATE support_tickets SET updated_at=now() WHERE id=%s",(tid,))
+ return {"ok":True}
+@app.get("/api/staff/tickets")
+def staff_ticket_list(r:Request):
+ u,role=staff_user(r)
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id,user_id,username,subject,status,created_at,updated_at FROM support_tickets ORDER BY updated_at DESC LIMIT 200")
+  rows=q.fetchall()
+ return {"items":[dict(x,created_at=x["created_at"].isoformat(),updated_at=x["updated_at"].isoformat()) for x in rows],"role":role}
+@app.get("/api/staff/tickets/{tid}/messages")
+def staff_ticket_messages(tid:int,r:Request):
+ staff_user(r)
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id FROM support_tickets WHERE id=%s",(tid,))
+  if not q.fetchone(): raise HTTPException(404,"Обращение не найдено")
+  q.execute("SELECT sender_role,body,created_at FROM support_messages WHERE ticket_id=%s ORDER BY id",(tid,))
+  rows=q.fetchall()
+ return {"items":[dict(x,created_at=x["created_at"].isoformat()) for x in rows]}
+@app.post("/api/staff/tickets/{tid}/messages")
+async def staff_ticket_reply(tid:int,r:Request):
+ u,role=staff_user(r); body=str((await r.json()).get("body","")).strip()
+ if len(body)<1 or len(body)>2000: raise HTTPException(400,"Сообщение должно быть до 2000 символов.")
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT user_id FROM support_tickets WHERE id=%s AND status='open'",(tid,)); t=q.fetchone()
+  if not t: raise HTTPException(404,"Открытое обращение не найдено")
+  q.execute("INSERT INTO support_messages(ticket_id,sender_id,sender_role,body) VALUES(%s,%s,%s,%s)",(tid,u["id"],role,body))
+  q.execute("UPDATE support_tickets SET updated_at=now() WHERE id=%s",(tid,))
+ if TOKEN: tg_call("sendMessage",{"chat_id":t["user_id"],"text":"Ответ поддержки по обращению #"+str(tid)+":\n"+body})
+ return {"ok":True}
+@app.post("/api/staff/tickets/{tid}/close")
+def staff_close_ticket(tid:int,r:Request):
+ staff_user(r)
+ with conn() as c,c.cursor() as q:
+  q.execute("UPDATE support_tickets SET status='closed',updated_at=now() WHERE id=%s RETURNING id",(tid,))
+  if not q.fetchone(): raise HTTPException(404,"Обращение не найдено")
+ return {"ok":True}
+@app.get("/api/owner/roles")
+def owner_roles(r:Request):
+ owner(r)
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT user_id,username,role,created_at FROM staff_roles ORDER BY created_at DESC")
+  rows=q.fetchall()
+ return {"items":[dict(x,created_at=x["created_at"].isoformat()) for x in rows]}
+@app.post("/api/owner/roles")
+async def grant_role(r:Request):
+ u=owner(r); d=await r.json()
+ try: uid=int(d.get("user_id",0))
+ except: raise HTTPException(400,"Нужен числовой Telegram ID")
+ role=str(d.get("role",""))
+ if uid<=0 or (OWNER and str(uid)==OWNER): raise HTTPException(400,"Нельзя назначить владельца через список ролей")
+ if role not in ("deputy","support","moderator"): raise HTTPException(400,"Неизвестная роль")
+ username=str(d.get("username",""))[:64]
+ with conn() as c,c.cursor() as q:
+  q.execute("INSERT INTO staff_roles(user_id,username,role,granted_by) VALUES(%s,%s,%s,%s) ON CONFLICT(user_id) DO UPDATE SET username=EXCLUDED.username,role=EXCLUDED.role,granted_by=EXCLUDED.granted_by,created_at=now()",(uid,username,role,u["id"]))
+ return {"ok":True}
+@app.delete("/api/owner/roles/{uid}")
+def revoke_role(uid:int,r:Request):
+ owner(r)
+ with conn() as c,c.cursor() as q: q.execute("DELETE FROM staff_roles WHERE user_id=%s",(uid,))
+ return {"ok":True}
+
 @app.get("/api/admin/orders")
 def adminorders(r:Request):
  owner(r)
