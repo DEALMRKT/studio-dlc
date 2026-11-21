@@ -17,6 +17,7 @@ def init():
   q.execute("CREATE TABLE IF NOT EXISTS products(id SERIAL PRIMARY KEY,title TEXT NOT NULL,description TEXT DEFAULT '',price TEXT DEFAULT 'По запросу',category TEXT DEFAULT 'Услуги',image TEXT DEFAULT '',active BOOLEAN DEFAULT TRUE)")
   q.execute("CREATE TABLE IF NOT EXISTS orders(id SERIAL PRIMARY KEY,user_id BIGINT NOT NULL,username TEXT DEFAULT '',product_id INT REFERENCES products(id) ON DELETE SET NULL,product_title TEXT NOT NULL,price TEXT NOT NULL,comment TEXT DEFAULT '',receipt BYTEA,receipt_type TEXT,status TEXT DEFAULT 'awaiting_review',created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("CREATE TABLE IF NOT EXISTS forum_posts(id SERIAL PRIMARY KEY,user_id BIGINT NOT NULL,username TEXT DEFAULT '',body TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS product_images(id SERIAL PRIMARY KEY,product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,data BYTEA NOT NULL,mime TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("SELECT count(*) n FROM products")
   if q.fetchone()["n"]==0:
    q.execute("INSERT INTO products(title,description,price,category) VALUES(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s)",("CRMP-сайт","Современный сайт для CRMP-проекта","От 1500 ₽","Сайты","Форум проекта","Категории, темы и профили пользователей","От 1200 ₽","Форумы","Motion-дизайн","Анимации и премиальная визуальная подача","От 700 ₽","Дизайн"))
@@ -178,6 +179,36 @@ async def status(oid:int,r:Request):
   try: requests.post("https://api.telegram.org/bot"+TOKEN+"/sendMessage",json={"chat_id":x["user_id"],"text":"Статус заказа #"+str(oid)+": "+s},timeout=8)
   except: pass
  return {"ok":True}
+
+@app.get("/api/products/{pid}/images")
+def product_images(pid:int,r:Request):
+ user(r)
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id,mime,data FROM product_images WHERE product_id=%s ORDER BY id",(pid,))
+  return {"items":[{"id":x["id"],"type":x["mime"],"data":base64.b64encode(bytes(x["data"])).decode()} for x in q.fetchall()]}
+@app.post("/api/admin/products/{pid}/images")
+async def add_product_images(pid:int,r:Request,files:list[UploadFile]=File(...)):
+ owner(r)
+ if not files or len(files)>8: raise HTTPException(400,"Можно загрузить от 1 до 8 фото за раз")
+ saved=[]
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT id FROM products WHERE id=%s",(pid,))
+  if not q.fetchone(): raise HTTPException(404,"Услуга не найдена")
+  q.execute("SELECT count(*) n FROM product_images WHERE product_id=%s",(pid,))
+  if q.fetchone()["n"]+len(files)>12: raise HTTPException(400,"Для услуги максимум 12 фотографий")
+  for f in files:
+   if f.content_type not in ("image/jpeg","image/png","image/webp"): raise HTTPException(400,"Поддерживаются JPG, PNG и WEBP")
+   b=await f.read()
+   if not b or len(b)>5*1024*1024: raise HTTPException(413,"Каждое фото — максимум 5 МБ")
+   q.execute("INSERT INTO product_images(product_id,data,mime) VALUES(%s,%s,%s) RETURNING id",(pid,psycopg2.Binary(b),f.content_type))
+   saved.append(q.fetchone()["id"])
+ return {"ok":True,"ids":saved}
+@app.delete("/api/admin/products/{pid}/images/{image_id}")
+def delete_product_image(pid:int,image_id:int,r:Request):
+ owner(r)
+ with conn() as c,c.cursor() as q: q.execute("DELETE FROM product_images WHERE id=%s AND product_id=%s",(image_id,pid))
+ return {"ok":True}
+
 @app.post("/api/admin/products")
 async def addproduct(r:Request):
  owner(r); d=await r.json()
@@ -280,6 +311,25 @@ button{touch-action:manipulation;-webkit-user-select:none;user-select:none}butto
 @media(hover:hover){.service:hover{transform:translateY(-6px) scale(1.012);border-color:#b69aff66;box-shadow:0 20px 50px #0007}.navbtn:hover{background:#ffffff0b;color:#fff}}
 @media(max-width:390px){.navbtn{min-width:49px;font-size:9px}.navbtn .ico{font-size:19px}.hero{min-height:330px}.serviceart{height:105px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* STUDIO DLC liquid-blue identity */
+:root{--bg:#030814;--violet:#2f8dff;--cyan:#83d5ff;--line:rgba(95,166,255,.16)}
+body:before{background:radial-gradient(ellipse at 50% 0%,#063d8040,transparent 48%),radial-gradient(ellipse at 100% 42%,#0058a522,transparent 38%),linear-gradient(180deg,#030714,#020611 75%)}
+.hero{background:linear-gradient(125deg,#061b38,#07152b 55%,#062a43);border-color:#267bcb55}
+.hero:before{border-color:#62baff55;box-shadow:0 0 0 30px #1688ff0a,0 0 0 65px #1688ff08,0 0 95px #1688ff55}
+.gradient{background-image:linear-gradient(100deg,#fff 4%,#a9d8ff 40%,#238fff 85%)}
+.brandmark{background:radial-gradient(circle at 30% 20%,#dff7ff,#279cff 40%,#073c8b 78%,#021b45);color:#00152e;box-shadow:0 0 0 1px #80caff88,0 0 22px #178fff88;font-family:'Space Grotesk';font-weight:800;font-size:22px;text-shadow:0 1px 2px #fff9,0 -2px 4px #001a55}
+.primary{background:linear-gradient(105deg,#d8f1ff,#5bb8ff 48%,#1268d9);color:#00142c;box-shadow:0 9px 30px #087cff44}
+.service{background:linear-gradient(145deg,#0d1c32,#07111f 75%)}
+.serviceart,.gallery{background:radial-gradient(circle at 50% 45%,#1262a7 0%,#092b52 45%,#061426 100%)}
+.nav{background:rgba(2,8,19,.93)}
+.gallery{position:relative;height:150px;border-radius:16px;overflow:hidden;margin-bottom:14px;touch-action:pan-y}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-count{position:absolute;right:9px;bottom:9px;padding:5px 8px;border-radius:20px;background:#020914b8;color:#e9f5ff;font-size:10px}
+.gallery-prev,.gallery-next{position:absolute;top:50%;transform:translateY(-50%);width:29px;height:29px;border:1px solid #ffffff44;border-radius:50%;background:#04152bbd;color:white}
+.gallery-prev{left:7px}.gallery-next{right:7px}
+.photo-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px}
+.photo-thumb{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid #ffffff24}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">✳</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
