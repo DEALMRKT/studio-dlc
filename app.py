@@ -20,6 +20,9 @@ def init():
   q.execute("CREATE TABLE IF NOT EXISTS product_images(id SERIAL PRIMARY KEY,product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,data BYTEA NOT NULL,mime TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("CREATE TABLE IF NOT EXISTS user_profiles(user_id BIGINT PRIMARY KEY,username TEXT DEFAULT '',first_name TEXT DEFAULT '',balance NUMERIC(12,2) NOT NULL DEFAULT 0,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("CREATE TABLE IF NOT EXISTS order_reviews(id SERIAL PRIMARY KEY,order_id INT NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,user_id BIGINT NOT NULL,rating INT NOT NULL CHECK(rating BETWEEN 1 AND 5),body TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS staff_roles(user_id BIGINT PRIMARY KEY,username TEXT DEFAULT '',role TEXT NOT NULL CHECK(role IN ('deputy','support','moderator')),granted_by BIGINT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS support_tickets(id SERIAL PRIMARY KEY,user_id BIGINT NOT NULL,username TEXT DEFAULT '',subject TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'open',created_at TIMESTAMPTZ DEFAULT now(),updated_at TIMESTAMPTZ DEFAULT now())")
+  q.execute("CREATE TABLE IF NOT EXISTS support_messages(id SERIAL PRIMARY KEY,ticket_id INT NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,sender_id BIGINT NOT NULL,sender_role TEXT NOT NULL,body TEXT NOT NULL,created_at TIMESTAMPTZ DEFAULT now())")
   q.execute("SELECT count(*) n FROM products")
   if q.fetchone()["n"]==0:
    q.execute("INSERT INTO products(title,description,price,category) VALUES(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s)",("CRMP-сайт","Современный сайт для CRMP-проекта","От 1500 ₽","Сайты","Форум проекта","Категории, темы и профили пользователей","От 1200 ₽","Форумы","Motion-дизайн","Анимации и премиальная визуальная подача","От 700 ₽","Дизайн"))
@@ -95,6 +98,16 @@ def owner(req):
  u=user(req)
  if not OWNER or str(u["id"]).strip()!=OWNER: raise HTTPException(403,"Доступ только владельцу")
  return u
+def role_of(uid):
+ if OWNER and str(uid)==OWNER: return "owner"
+ with conn() as c,c.cursor() as q:
+  q.execute("SELECT role FROM staff_roles WHERE user_id=%s",(uid,)); x=q.fetchone()
+ return x["role"] if x else "user"
+def staff_user(req, allowed=("deputy","support")):
+ u=user(req); role=role_of(u["id"])
+ if role=="owner": return u,role
+ if role not in allowed: raise HTTPException(403,"Нет доступа к разделу команды")
+ return u,role
 def require_subscription(u):
  if not subscribed(u['id']): raise HTTPException(403,'Сначала подпишитесь на @studiodlc и нажмите «Проверить подписку».')
  return u
@@ -113,7 +126,7 @@ def health(): return {"ok":True}
 def index(): return PAGE
 @app.get("/api/session")
 def session(r:Request):
- u=user(r); return {"user":u,"owner":str(u["id"])==OWNER,"subscribed":subscribed(u["id"])}
+ u=user(r); role=role_of(u["id"]); return {"user":u,"owner":role=="owner","role":role,"staff":role in ("owner","deputy","support"),"subscribed":subscribed(u["id"])}
 @app.get("/api/products")
 def products(r:Request):
  require_subscription(user(r))
