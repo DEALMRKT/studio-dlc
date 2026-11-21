@@ -157,7 +157,7 @@ async def order(r:Request):
   if not p: raise HTTPException(404,"Услуга не найдена")
   q.execute("INSERT INTO orders(user_id,username,product_id,product_title,price,comment) VALUES(%s,%s,%s,%s,%s,%s) RETURNING id",(u["id"],u.get("username",""),p["id"],p["title"],p["price"],str(d.get("comment",""))[:1000])); oid=q.fetchone()["id"]
  notify("Новый заказ #"+str(oid)+"\n"+p["title"]+" · "+p["price"]+"\nTelegram ID: "+str(u["id"]))
- return {"id":oid,"payment_url":PAYMENT}
+ return {"id":oid,"payment_url":PAYMENT,"product_title":p["title"],"price":p["price"]}
 @app.post("/api/orders/{oid}/receipt")
 async def receipt(oid:int,r:Request,file:UploadFile=File(...)):
  u=require_subscription(user(r))
@@ -555,6 +555,23 @@ body:before{background:linear-gradient(115deg,transparent 20%,#d6e7f008 50%,tran
 @media(max-width:600px){.hero{min-height:360px}.hero-metal-sphere{right:13%;top:28%;width:58px;height:58px}.hero-orbit{right:-25%;width:85%}.brand-name{font-size:17px;letter-spacing:2px}}
 @media(prefers-reduced-motion:reduce){.brand-mark:after,.hero:before,.hero:after,.orbit-one,.orbit-two,.orbit-three,.hero-metal-sphere,.primary:before{animation:none!important}}
 
+.checkout-brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:2px;margin:6px 0 28px;color:#eef5ff}
+.checkout-brand b{color:#83caff}
+.checkout-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;color:#eaf7ff;font-size:25px;font-family:Georgia,serif;background:linear-gradient(145deg,#8ad5ff,#1674c9 58%,#192c64);box-shadow:0 0 24px #319fff77,inset 0 1px 5px #fff9;border:1px solid #b7e6ff}
+.checkout-kicker{font-size:10px;letter-spacing:2.5px;color:#89bfff;font-weight:800;margin-bottom:12px}
+.checkout-title{font-size:30px;line-height:1.1;margin:0 0 10px;color:#f4f7ff}
+.checkout-summary{display:grid;gap:9px;padding:20px;margin:22px 0;border:1px solid #3c5d89;border-radius:20px;background:linear-gradient(135deg,#102b49,#101426 75%);box-shadow:inset 0 1px #ffffff12,0 12px 35px #0005}
+.checkout-summary small{font-size:10px;letter-spacing:2px;color:#8ca9c7}
+.checkout-summary b{font-size:17px;color:#f3f6ff;margin-bottom:8px}
+.checkout-summary strong{font-size:28px;color:#a8dcff}
+.checkout-provider{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:16px;border:1px solid #343c57;border-radius:16px;background:#151827}
+.checkout-provider-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#fff;color:#222;font-weight:900;font-size:22px}
+.checkout-provider span:nth-child(2){display:grid;gap:3px;flex:1}
+.checkout-provider small{font-size:11px;color:#9ca9bd}
+.checkout-arrow{font-size:21px;color:#83caff}
+.checkout-pay{min-height:58px;background:linear-gradient(110deg,#65baff,#277ee6 55%,#536de8);box-shadow:0 10px 30px #287de655}
+.checkout-note{font-size:11px;line-height:1.55;color:#8995aa;margin-top:17px}
+
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="brand-mark" aria-hidden="true"><span>S</span></span><span class="brand-name"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -618,7 +635,36 @@ async function loadProductImages(pid){if(imageCache[pid]||imageLoading.has(pid))
 async function loadProducts(){const d=await api('/api/products');products=d.items||[];renderProducts()}
 function openOrder(id){selected=products.find(p=>Number(p.id)===Number(id));if(!selected)return; $('modalTitle').textContent=selected.title;$('modalDesc').textContent=(selected.description||'')+' · '+selected.price;$('orderComment').value='';$('orderModal').classList.add('open');if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light')}
 function closeModal(){$('orderModal').classList.remove('open')}
-async function createOrder(){if(!selected)return;try{const d=await api('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:selected.id,comment:$('orderComment').value})});closeModal();toast('Заявка #'+d.id+' создана');if(tg&&tg.openLink)tg.openLink(d.payment_url);else window.open(d.payment_url,'_blank');go('orders')}catch(e){toast(e.message)}}
+let checkoutUrl='',checkoutOrderId=0;
+async function createOrder(){
+ if(!selected)return;
+ const btn=document.querySelector('[data-action="create-order"]');
+ if(btn){btn.disabled=true;btn.textContent='Создаём заказ…'}
+ try{
+  const d=await api('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product_id:selected.id,comment:$('orderComment').value})});
+  checkoutUrl=d.payment_url;checkoutOrderId=d.id;
+  const title=d.product_title||selected.title,price=d.price||selected.price;
+  $('orderModal').querySelector('.modal').innerHTML=
+   '<button class="modalclose" data-action="close-modal">×</button>'+
+   '<div class="checkout-brand"><span class="checkout-mark">S</span><span>STUDIO <b>DLC</b> PAY</span></div>'+
+   '<div class="checkout-kicker">SECURE CHECKOUT · ЗАКАЗ #'+d.id+'</div>'+
+   '<h2 class="checkout-title">Заказ создан</h2>'+
+   '<p class="muted">Проверь детали и перейди на официальную страницу YooMoney для оплаты.</p>'+
+   '<div class="checkout-summary"><small>УСЛУГА</small><b>'+esc(title)+'</b><small>К ОПЛАТЕ / ЦЕНА ПО ЗАКАЗУ</small><strong>'+esc(price)+'</strong></div>'+
+   '<div class="checkout-provider"><span class="checkout-provider-icon">Ю</span><span><b>YooMoney</b><small>Переход на внешний платёжный сервис</small></span><span class="checkout-arrow">↗</span></div>'+
+   '<button class="primary wide checkout-pay" data-action="open-payment">Перейти к оплате ↗</button>'+
+   '<button class="secondary wide" data-action="checkout-orders">Я оплатил — открыть мои заказы</button>'+
+   '<p class="checkout-note">После оплаты вернись сюда и прикрепи подтверждение в заказе. Оплата проверяется владельцем вручную. STUDIO DLC не является банком или платёжной системой.</p>';
+  toast('Заказ #'+d.id+' создан');
+ }catch(e){toast(e.message)}
+ finally{if(btn)btn.disabled=false}
+}
+function openCheckoutPayment(){
+ if(!checkoutUrl){toast('Ссылка оплаты не найдена');return}
+ if(tg&&tg.openLink)tg.openLink(checkoutUrl);
+ else window.open(checkoutUrl,'_blank','noopener');
+}
+
 async function loadProfile(){try{const d=await api('/api/profile'),u=d.user||{},name=[u.first_name,u.last_name].filter(Boolean).join(' ')||'Пользователь';$('profileCard').innerHTML='<div class="profilehead"><div class="avatar">'+esc(name.slice(0,1).toUpperCase())+'</div><div><b>'+esc(name)+'</b><div class="muted">@'+esc(u.username||'telegram-user')+'</div></div></div><div class="wallet"><small>МОЙ БАЛАНС</small><strong>'+esc(d.balance)+' ₽</strong><p class="muted">Баланс аккаунта STUDIO DLC</p></div><div class="profilemeta">Telegram ID · '+esc(u.id)+'</div><button class="secondary wide" data-go="orders">Мои заказы ↗</button>';$('profileAccess').innerHTML=(isOwner?'<div class="access-card owner-access"><div><b>Панель владельца</b><small>Управление студией, заказами и ролями</small></div><button class="primary" data-go="admin">Открыть ↗</button></div>':'')+(isStaff?'<div class="access-card"><div><b>Рабочее пространство</b><small>Обращения и задачи команды</small></div><button class="secondary" data-go="staff">Открыть ↗</button></div>':'');$('staffShortcut').hidden=!isStaff}catch(e){$('profileCard').innerHTML='<div class="notice">'+esc(e.message)+'</div>'}}
 async function loadOrders(){
  try{
@@ -666,7 +712,7 @@ async function setStatus(id,status){try{await api('/api/admin/orders/'+id+'/stat
 async function receiptView(id){try{const x=await api('/api/admin/orders/'+id+'/receipt');const w=window.open();if(w)w.document.write('<title>Чек заказа #'+id+'</title><body style="margin:0;background:#111;display:grid;place-items:center"><img style="max-width:100%;max-height:100vh" src="data:'+x.type+';base64,'+x.data+'"></body>');else toast('Разреши всплывающие окна для просмотра чека')}catch(e){toast(e.message)}}
 async function editProduct(id){const p=products.find(x=>Number(x.id)===Number(id));if(!p)return;const title=prompt('Название услуги',p.title);if(title===null)return;const price=prompt('Цена',p.price),description=prompt('Описание',p.description),category=prompt('Категория',p.category);try{await api('/api/admin/products/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,price,description,category,active:true})});await loadProducts();loadAdmin();toast('Услуга обновлена')}catch(e){toast(e.message)}}
 async function deleteProduct(id){if(!confirm('Удалить услугу из каталога?'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});await loadProducts();loadAdmin();toast('Услуга удалена')}catch(e){toast(e.message)}}
-function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='toggle-more')toggleMore();else if(a==='close-more')closeMore();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
+function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='open-payment')openCheckoutPayment();else if(a==='checkout-orders'){closeModal();go('orders');loadOrders();}else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='toggle-more')toggleMore();else if(a==='close-more')closeMore();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
 document.addEventListener('click',e=>{const t=e.target instanceof Element?e.target:null;if(!t)return;const b=t.closest('button');if(!b)return;routeFromButton(b)});
 document.addEventListener('touchstart',e=>{const g=e.target.closest('.gallery');if(g)g.dataset.touchx=e.touches[0].clientX},{passive:true});document.addEventListener('touchend',e=>{const g=e.target.closest('.gallery');if(!g||g.dataset.touchx===undefined)return;const dx=e.changedTouches[0].clientX-Number(g.dataset.touchx);delete g.dataset.touchx;if(Math.abs(dx)>35){const pid=Number(g.dataset.gallery);paintGallery(g,pid,(Number(g.dataset.index)||0)+(dx<0?1:-1))}},{passive:true});
 function bindMotion(){
