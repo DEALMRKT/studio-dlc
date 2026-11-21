@@ -166,8 +166,11 @@ async def submit_review(oid:int,r:Request):
   q.execute("INSERT INTO order_reviews(order_id,user_id,rating,body) VALUES(%s,%s,%s,%s) ON CONFLICT(order_id) DO NOTHING RETURNING id",(oid,u["id"],rating,body))
   if not q.fetchone(): raise HTTPException(409,"Отзыв по этому заказу уже отправлен.")
  who="@"+u.get("username","") if u.get("username") else (u.get("first_name") or "Клиент")
- sent=tg_call("sendMessage",{"chat_id":"@logovotziv","text":"⭐ Отзыв STUDIO DLC\nЗаказ #"+str(oid)+" · "+o["product_title"]+"\nОценка: "+("⭐"*rating)+"\nОт: "+who+"\n\n"+body})
- return {"ok":True,"published":bool(sent and sent.get("ok"))}
+ sent=tg_call("sendMessage",{"chat_id":"@logovotziv","text":"⭐ Отзыв STUDIO DLC\\nЗаказ #"+str(oid)+" · "+o["product_title"]+"\\nОценка: "+("⭐"*rating)+"\\nОт: "+who+"\\n\\n"+body})
+ if not sent or not sent.get("ok"):
+  with conn() as c,c.cursor() as q: q.execute("DELETE FROM order_reviews WHERE order_id=%s AND user_id=%s",(oid,u["id"]))
+  raise HTTPException(503,"Не удалось отправить отзыв. Попробуй ещё раз позже.")
+ return {"ok":True,"published":True}
 @app.get("/api/forum")
 def forum(r:Request):
  require_subscription(user(r))
