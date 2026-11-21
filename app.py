@@ -359,7 +359,27 @@ body:before{background:radial-gradient(ellipse at 50% 0%,#063d8040,transparent 4
 .gallery-prev{left:7px}.gallery-next{right:7px}
 .photo-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px}
 .photo-thumb{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid #ffffff24}
-.avatar{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(135deg,#d9f2ff,#238fff 55%,#062c65);color:#04142b;font:800 27px 'Space Grotesk';box-shadow:0 0 25px #168bff55}.profilehead{display:flex;align-items:center;gap:14px}.wallet{margin:24px 0 16px;padding:22px;border:1px solid #3b8edb55;border-radius:20px;background:radial-gradient(circle at 90% 0%,#1479c733,transparent 50%),linear-gradient(135deg,#0d2544,#081528)}.wallet small{color:#9acfff;letter-spacing:2px;font-size:10px}.wallet strong{display:block;font:700 34px 'Space Grotesk';margin-top:8px;color:#e5f5ff}.profilemeta{padding:12px 0;color:#8ea9c3;font-size:11px}.reviewbox{margin-top:12px;padding:14px;border:1px solid #3985c455;border-radius:16px;background:#0c1a2a}.reviewbox .field{margin-top:9px}#admin[hidden]{display:none!important}body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,body.locked .nav{display:none!important}body.locked #gate{display:block!important;margin:20px 0;padding:20px;border:1px solid #287dc855;border-radius:18px;background:#0b1b30;color:#e7f5ff}body.locked #gate a{color:#8fd1ff}.brandmark{background:radial-gradient(circle at 50% 50%,#07182d,#020711 78%)!important;color:transparent!important;background-image:linear-gradient(145deg,#fff 2%,#a8e4ff 24%,#238cff 46%,#e3f7ff 58%,#1766c5 78%,#fff)!important;-webkit-background-clip:text!important;background-clip:text!important;text-shadow:0 0 9px #238cffaa,0 0 20px #1268d988!important;border:1px solid #4caaff66;box-shadow:0 0 18px #167bdb55,inset 0 0 12px #167bdb22!important}/* Make decorative layers transparent to taps on iOS Telegram WebView */.hero:before,.hero:after,.service:before,.service:after,.serviceart:before,.serviceart:after{pointer-events:none!important}.hero .primary,.service button,.nav button{position:relative;z-index:3;pointer-events:auto!important}.nav{z-index:50;pointer-events:auto}.navinner,.navbtn{pointer-events:auto!important}</style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
+.avatar{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(135deg,#d9f2ff,#238fff 55%,#062c65);color:#04142b;font:800 27px 'Space Grotesk';box-shadow:0 0 25px #168bff55}.profilehead{display:flex;align-items:center;gap:14px}.wallet{margin:24px 0 16px;padding:22px;border:1px solid #3b8edb55;border-radius:20px;background:radial-gradient(circle at 90% 0%,#1479c733,transparent 50%),linear-gradient(135deg,#0d2544,#081528)}.wallet small{color:#9acfff;letter-spacing:2px;font-size:10px}.wallet strong{display:block;font:700 34px 'Space Grotesk';margin-top:8px;color:#e5f5ff}.profilemeta{padding:12px 0;color:#8ea9c3;font-size:11px}.reviewbox{margin-top:12px;padding:14px;border:1px solid #3985c455;border-radius:16px;background:#0c1a2a}.reviewbox .field{margin-top:9px}#admin[hidden]{display:none!important}body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,body.locked .nav{display:none!important}body.locked #gate{display:block!important;margin:20px 0;padding:20px;border:1px solid #287dc855;border-radius:18px;background:#0b1b30;color:#e7f5ff}body.locked #gate a{color:#8fd1ff}.brandmark{background:radial-gradient(circle at 50% 50%,#07182d,#020711 78%)!important;color:transparent!important;background-image:linear-gradient(145deg,#fff 2%,#a8e4ff 24%,#238cff 46%,#e3f7ff 58%,#1766c5 78%,#fff)!important;-webkit-background-clip:text!important;background-clip:text!important;text-shadow:0 0 9px #238cffaa,0 0 20px #1268d988!important;border:1px solid #4caaff66;box-shadow:0 0 18px #167bdb55,inset 0 0 12px #167bdb22!important}/* Make decorative layers transparent to taps on iOS Telegram WebView */.hero:before,.hero:after,.service:before,.service:after,.serviceart:before,.serviceart:after{pointer-events:none!important}.hero .primary,.service button,.nav button{position:relative;z-index:3;pointer-events:auto!important}.nav{z-index:50;pointer-events:auto}.navinner,.navbtn{pointer-events:auto!important}/* STUDIO DLC membership gate */
+#gate[hidden]{display:none!important}
+#gate:not([hidden]){position:relative;isolation:isolate;overflow:hidden;margin:clamp(22px,7vh,72px) auto 34px;max-width:520px;min-height:360px;padding:34px 26px;border:1px solid rgba(91,174,255,.28);border-radius:30px;background:radial-gradient(ellipse at 50% -10%,rgba(20,119,255,.27),transparent 58%),linear-gradient(145deg,rgba(12,27,49,.98),rgba(4,10,22,.98));box-shadow:0 28px 90px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.07);text-align:center;animation:gateEnter .65s cubic-bezier(.2,.8,.2,1) both}
+#gate:before{content:"";position:absolute;inset:-45%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 68%,rgba(40,145,255,.13),transparent 78%);animation:gateSpin 18s linear infinite}
+#gate h2{margin:13px 0 10px;color:#f3f8ff;font:700 clamp(25px,6vw,34px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-1.2px}
+#gate p{max-width:390px;margin:0 auto 24px;color:#a9bdd5;font-size:14px;line-height:1.7}
+.gate-orb{width:82px;height:82px;margin:0 auto 22px;display:grid;place-items:center;border-radius:27px;background:linear-gradient(145deg,#f8fdff 0%,#7bcaff 24%,#126bd0 54%,#061b3c 100%);box-shadow:0 0 28px rgba(38,143,255,.45),inset 0 2px 4px rgba(255,255,255,.8);transform:rotate(-7deg)}
+.gate-orb span{font:900 51px/1 'Space Grotesk';color:#eaf8ff;text-shadow:0 2px 2px #06427d,0 0 16px #fff}
+.gate-kicker{color:#78bfff;font-size:10px;font-weight:800;letter-spacing:3px}
+.gate-link{display:flex!important;align-items:center;justify-content:center;gap:12px;width:100%;max-width:350px;margin:0 auto 12px;text-decoration:none!important;min-height:54px;border-radius:16px!important;box-shadow:0 10px 30px rgba(24,126,255,.25);transition:transform .22s ease,filter .22s ease,box-shadow .22s ease}
+.gate-link:active,.gate-check-btn:active{transform:scale(.975)}
+.gate-check-btn{width:100%;max-width:350px;min-height:50px;border-radius:16px!important}
+.gate-status{margin:18px auto 0;max-width:350px;color:#7894b2;font-size:11px;line-height:1.55}
+#checkSub.loading{opacity:.7;pointer-events:none}
+.gate-check{width:64px;height:64px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#7ce7c1,#0c9d72);color:#042c24;font-size:32px;box-shadow:0 0 35px #16bd8a55}
+.gate-success{animation:gateEnter .35s ease both}
+body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,body.locked #admin,body.locked .nav{display:none!important}
+@keyframes gateEnter{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes gateSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#gate,#gate:before{animation:none!important}.gate-link,.gate-check-btn{transition:none!important}}
+</style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">S</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
 <div id="gate" class="notice" hidden>Чтобы пользоваться сервисом, подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем нажми «Проверить».</div>
@@ -437,12 +457,68 @@ function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){
 document.addEventListener('click',e=>{const t=e.target instanceof Element?e.target:null;if(!t)return;const b=t.closest('button');if(!b)return;routeFromButton(b)});
 document.addEventListener('touchstart',e=>{const g=e.target.closest('.gallery');if(g)g.dataset.touchx=e.touches[0].clientX},{passive:true});document.addEventListener('touchend',e=>{const g=e.target.closest('.gallery');if(!g||g.dataset.touchx===undefined)return;const dx=e.changedTouches[0].clientX-Number(g.dataset.touchx);delete g.dataset.touchx;if(Math.abs(dx)>35){const pid=Number(g.dataset.gallery);paintGallery(g,pid,(Number(g.dataset.index)||0)+(dx<0?1:-1))}},{passive:true});
 function bindMotion(){const obs=('IntersectionObserver'in window)?new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}}),{threshold:.08}):null;document.querySelectorAll('.hero,.stats,.sectionhead,.service,.panel,.order').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(Math.min(i%5,4)*55)+'ms';if(obs)obs.observe(el);else el.classList.add('visible')})}
-document.addEventListener('click',async e=>{if(e.target&&e.target.id==='checkSub'){const b=e.target;b.disabled=true;b.textContent='Проверяем…';try{const s=await api('/api/session');if(s.subscribed){subscribed=true;document.body.classList.remove('locked');$('gate').hidden=true;isOwner=!!s.owner;if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false}await loadProducts();toast('Подписка подтверждена')}else toast('Подписка пока не найдена')}catch(err){toast(err.message)}finally{b.disabled=false;b.textContent='Проверить подписку'}}});
+async function checkSubscription(showMessage){
+ const b=$('checkSub'),status=$('subStatus');
+ if(b){b.disabled=true;b.classList.add('loading');b.textContent='Проверяем подписку…'}
+ if(status)status.textContent='Проверяем участие в канале';
+ try{
+  const s=await api('/api/session');
+  if(!s.subscribed){
+   if(status)status.textContent='Подписка пока не найдена. Подпишись на канал и попробуй ещё раз.';
+   if(showMessage)toast('Подписка пока не найдена');
+   return false;
+  }
+  subscribed=true;isOwner=!!s.owner;
+  document.body.classList.remove('locked');
+  $('gate').classList.add('gate-success');
+  $('gate').innerHTML='<div class="gate-check">✓</div><div class="gate-kicker">ACCESS GRANTED</div><h2>Добро пожаловать в STUDIO DLC</h2><p>Подписка подтверждена. Открываем каталог услуг…</p>';
+  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=true;}
+  await loadProducts();
+  $('gate').hidden=true;
+  if(showMessage)toast('Доступ открыт');
+  return true;
+ }catch(err){
+  if(status)status.textContent=err.message||'Не удалось проверить подписку. Попробуй ещё раз.';
+  if(showMessage)toast(err.message||'Ошибка проверки');
+  return false;
+ }finally{
+  if(b){b.disabled=false;b.classList.remove('loading');b.textContent='Я подписался — проверить'}
+ }
+}
+document.addEventListener('click',e=>{const t=e.target instanceof Element?e.target:null;if(t&&t.closest('#checkSub'))checkSubscription(true)});
+window.addEventListener('focus',()=>{if(!subscribed&&tg&&tg.initData)checkSubscription(false)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!subscribed&&tg&&tg.initData)checkSubscription(false)});
 window.addEventListener('error',e=>{if(e.message)toast('Ошибка интерфейса: '+e.message.slice(0,100))});
 
 $('orderModal').addEventListener('click',e=>{if(e.target===$('orderModal'))closeModal()});
-async function boot(){if(!tg||!tg.initData){document.body.classList.add('locked');$('userStatus').textContent='ОТКРОЙ В TELEGRAM';$('gate').hidden=false;$('gate').innerHTML='Открой Mini App через кнопку в Telegram-боте <b>@STUDIO DLC</b>, чтобы авторизоваться. Обычный браузер не передаёт Telegram-подпись.';try{await loadProducts()}catch(e){$('catalog').innerHTML='<div class="empty">Открой приложение из Telegram, чтобы загрузить каталог.</div>'}return}
-try{const s=await api('/api/session');$('userStatus').textContent=s.user.first_name||'WELCOME';isOwner=!!s.owner;subscribed=!!s.subscribed;if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}if(!subscribed){document.body.classList.add('locked');$('gate').hidden=false;$('gate').innerHTML='Для доступа подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем нажми «Проверить подписку». <button class="primary" id="checkSub">Проверить подписку</button>';return}$('gate').hidden=true;await loadProducts()}catch(e){$('gate').hidden=false;$('gate').textContent=e.message;toast(e.message)}}
+async function boot(){
+ if(!tg||!tg.initData){
+  document.body.classList.add('locked');
+  $('userStatus').textContent='ОТКРОЙ В TELEGRAM';
+  $('gate').hidden=false;
+  $('gate').innerHTML='<div class="gate-kicker">STUDIO DLC · PRIVATE ACCESS</div><h2>Открой приложение в Telegram</h2><p>Авторизация и проверка подписки доступны внутри Telegram Mini App.</p><a class="primary gate-link" href="https://t.me/studiodlc">Открыть Telegram ↗</a>';
+  return;
+ }
+ try{
+  const s=await api('/api/session');
+  $('userStatus').textContent=s.user.first_name||'WELCOME';
+  isOwner=!!s.owner;subscribed=!!s.subscribed;
+  $('adminNav').hidden=true;$('admin').hidden=true;
+  if(!subscribed){
+   document.body.classList.add('locked');
+   $('gate').hidden=false;
+   $('gate').innerHTML='<div class="gate-orb"><span>S</span></div><div class="gate-kicker">STUDIO DLC · MEMBER ACCESS</div><h2>Сначала — подписка</h2><p>Подпишись на наш Telegram-канал, чтобы открыть каталог, оформить заказ и пользоваться личным кабинетом.</p><a class="primary gate-link" href="https://t.me/studiodlc" target="_blank" rel="noopener">Подписаться на канал <span>↗</span></a><button class="secondary gate-check-btn" id="checkSub">Я подписался — проверить</button><div class="gate-status" id="subStatus">После подписки вернись сюда — доступ откроется автоматически.</div>';
+   return;
+  }
+  document.body.classList.remove('locked');
+  if(isOwner){$('adminNav').hidden=false;}
+  await loadProducts();
+ }catch(e){
+  $('gate').hidden=false;
+  $('gate').innerHTML='<div class="gate-kicker">CONNECTION</div><h2>Не удалось загрузить приложение</h2><p>'+esc(e.message)+'</p><button class="secondary" onclick="location.reload()">Повторить</button>';
+  toast(e.message);
+ }
+}
 boot().then(()=>bindMotion()).catch(e=>toast('Не удалось запустить приложение: '+e.message));
 })();
 </script></body></html>"""
