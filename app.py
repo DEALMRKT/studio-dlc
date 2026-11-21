@@ -70,10 +70,11 @@ async def telegram_webhook(r: Request):
  if chat.get("id") and text_in.split("@")[0] in ("/start", "/help"):
   tg_call("sendMessage", {
    "chat_id": chat["id"],
-   "text": "Добро пожаловать в STUDIO DLC! Открой каталог, оформи заказ и следи за его статусом прямо в приложении.",
-   "reply_markup": {"inline_keyboard": [[
-    {"text": "✦ Открыть STUDIO DLC", "web_app": {"url": WEBAPP_URL}}
-   ]]}
+   "text": "Добро пожаловать в STUDIO DLC! Сначала подпишись на канал, затем открой приложение и проверь подписку.",
+   "reply_markup": {"inline_keyboard": [
+    [{"text":"✦ Подписаться на STUDIO DLC","url":"https://t.me/studiodlc"}],
+    [{"text":"Открыть STUDIO DLC","web_app":{"url":WEBAPP_URL+"?v=3"}}]
+   ]}
   })
  return {"ok": True}
 
