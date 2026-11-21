@@ -262,12 +262,12 @@ PAGE=r"""<!doctype html>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 :root{--bg:#090811;--panel:#12111d;--panel2:#191626;--line:rgba(255,255,255,.09);--muted:#9692a9;--white:#f7f4ff;--violet:#a78bfa;--cyan:#76e4df;--pink:#e6a5ff}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:var(--bg);color:var(--white);font-family:Manrope,system-ui,sans-serif;overflow-x:hidden;padding-bottom:105px}
+*{box-sizing:border-box}[hidden]{display:none!important}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:var(--bg);color:var(--white);font-family:Manrope,system-ui,sans-serif;overflow-x:hidden;padding-bottom:105px}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 8% 4%,rgba(112,65,190,.25),transparent 34%),radial-gradient(ellipse at 92% 24%,rgba(34,151,155,.13),transparent 32%),linear-gradient(180deg,#0b0914,#090811 70%)}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.12;z-index:-1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E")}
 .aurora{position:fixed;width:340px;height:340px;border-radius:50%;filter:blur(90px);opacity:.18;pointer-events:none;z-index:-1;animation:float 13s ease-in-out infinite alternate}.a1{background:#8b5cf6;top:10%;left:-220px}.a2{background:#27c6bb;right:-250px;top:48%;animation-delay:-6s}
 @keyframes float{from{transform:translate3d(0,-20px,0) scale(.9)}to{transform:translate3d(70px,90px,0) scale(1.2)}}
-@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
+input[type=file]::file-selector-button{appearance:none;border:1px solid #8e7ac8;background:linear-gradient(110deg,#c8b4ff,#83e5df);color:#171222;border-radius:11px;padding:10px 14px;margin:0 12px 0 0;font:800 12px Manrope;cursor:pointer}input[type=file]{color:#aaa4bc;font-size:12px}@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
 @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,.25)}50%{box-shadow:0 0 0 9px rgba(167,139,250,0)}}
 .shell{width:min(100%,760px);margin:auto;padding:18px 17px 30px}.topbar{height:48px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
@@ -418,7 +418,7 @@ let products=[],selected=null,isOwner=false,subscribed=false;const imageCache={}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.headers||{});const r=await fetch(path,Object.assign({},opt,{headers:h}));let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.detail||('Ошибка '+r.status));return d}
-function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));if(v==='orders')loadOrders();if(v==='admin')loadAdmin();window.scrollTo({top:0,behavior:'instant'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
+function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='admin')$('admin').hidden=false;if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));if(v==='orders')loadOrders();if(v==='admin')loadAdmin();window.scrollTo({top:0,behavior:'instant'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
 function iconFor(category){const s=(category||'').toLowerCase();if(s.includes('сайт'))return '⌘';if(s.includes('форум'))return '◈';if(s.includes('дизайн'))return '✳';return '✦'}
 function card(p){return '<article class="service"><div class="gallery" data-gallery="'+p.id+'"><span class="glyph">'+iconFor(p.category)+'</span></div><div class="category">'+esc(p.category)+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><div class="price">'+esc(p.price)+'</div><button class="secondary" data-order="'+p.id+'">Подробнее <span>↗</span></button></article>'}
 function renderProducts(){ $('catalog').innerHTML=products.map(card).join('')||'<div class="empty">Скоро здесь появятся услуги.</div>'; $('featured').innerHTML=products.slice(0,2).map(card).join('')||'<div class="empty">Каталог обновляется.</div>';products.forEach(p=>loadProductImages(p.id))}
@@ -433,7 +433,7 @@ async function loadOrders(){
   const d=await api('/api/my-orders');
   const rows=d.items||[];
   $('myorders').innerHTML=rows.map(o=>{
-   const status=o.status==='completed'?'Выдан':esc(o.status);
+   const status=({awaiting_review:'Ожидает проверки',paid:'Оплачен',rejected:'Отклонён',completed:'Заказ выдан'})[o.status]||'В обработке';
    let extra='';
    if(o.status==='completed'){
     extra=o.reviewed
@@ -480,7 +480,7 @@ async function checkSubscription(showMessage){
   document.body.classList.remove('locked');
   $('gate').classList.add('gate-success');
   $('gate').innerHTML='<div class="gate-check">✓</div><div class="gate-kicker">ACCESS GRANTED</div><h2>Добро пожаловать в STUDIO DLC</h2><p>Подписка подтверждена. Открываем каталог услуг…</p>';
-  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=true;}
+  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}
   await loadProducts();
   $('gate').hidden=true;
   if(showMessage)toast('Доступ открыт');
@@ -511,7 +511,7 @@ async function boot(){
   const s=await api('/api/session');
   $('userStatus').textContent=s.user.first_name||'WELCOME';
   isOwner=!!s.owner;subscribed=!!s.subscribed;
-  $('adminNav').hidden=true;$('admin').hidden=true;
+  $('adminNav').hidden=!isOwner;$('admin').hidden=!isOwner;
   if(!subscribed){
    document.body.classList.add('locked');
    $('gate').hidden=false;
@@ -519,7 +519,7 @@ async function boot(){
    return;
   }
   document.body.classList.remove('locked');
-  if(isOwner){$('adminNav').hidden=false;}
+  if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}
   await loadProducts();
  }catch(e){
   $('gate').hidden=false;
