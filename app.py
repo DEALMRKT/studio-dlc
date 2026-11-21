@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 TOKEN=os.getenv("BOT_TOKEN","")
 OWNER=os.getenv("OWNER_TELEGRAM_ID","").strip()
 CHANNEL=os.getenv("REQUIRED_CHANNEL","@studiodlc")
-PAYMENT=os.getenv("PAYMENT_URL","https://yoomoney.ru/to/4100119440946091")
+PAYMENT=os.getenv("PAYMENT_URL","https://yoomoney.ru/fundraise/1LMLRRQ50V7.261121")
 DB=os.getenv("DATABASE_URL")
 if not DB: raise RuntimeError("DATABASE_URL is not configured")
 app=FastAPI(title="STUDIO DLC")
@@ -577,6 +577,29 @@ body:before{background:linear-gradient(115deg,transparent 20%,#d6e7f008 50%,tran
 .nav{background:linear-gradient(90deg,#080e24f5,#10102cf5,#0b1728f5);border-top-color:#4b83d955}
 .checkout-summary{background:radial-gradient(ellipse at 100% 0%,#7a43ff55,transparent 48%),linear-gradient(135deg,#103a66,#121a42 58%,#201343);border-color:#4c9dff;box-shadow:0 14px 40px #174cff33,inset 0 1px #ffffff22}
 .checkout-provider{background:linear-gradient(120deg,#122e50,#201844);border-color:#4e87d9}
+
+/* STUDIO DLC — premium electric RGB motion layer */
+:root{--blue:#42c7ff;--violet:#9b72ff;--cyan:#42f5df;--line:rgba(89,174,255,.34)}
+body{background:radial-gradient(ellipse at 12% 4%,#087bff66,transparent 34%),radial-gradient(ellipse at 91% 15%,#873cff55,transparent 36%),radial-gradient(ellipse at 50% 92%,#00d9c72a,transparent 43%),linear-gradient(180deg,#070d21 0%,#09091d 54%,#071322 100%)}
+body:before{background:linear-gradient(115deg,transparent 20%,#4acbff12 42%,#9b72ff17 54%,transparent 76%);background-size:260% 260%;animation:dlcAurora 13s ease-in-out infinite alternate}
+@keyframes dlcAurora{0%{background-position:0% 40%;opacity:.55}100%{background-position:100% 65%;opacity:1}}
+.hero{transform-style:preserve-3d;box-shadow:0 30px 85px #020615bb,0 0 36px #3c83ff25,inset 0 1px #ffffff26;animation:dlcHeroFloat 7s ease-in-out infinite}
+@keyframes dlcHeroFloat{0%,100%{transform:translateY(0) perspective(1000px) rotateX(0deg)}50%{transform:translateY(-5px) perspective(1000px) rotateX(.45deg)}}
+.hero:after{border-color:#65eaff66;box-shadow:0 0 35px #48baff45}
+.brand{filter:drop-shadow(0 0 13px #579dff35)}
+.word-dlc{background-image:linear-gradient(100deg,#9b7cff 0%,#50c9ff 48%,#4df4df 100%);background-size:200% auto;animation:dlcLogoFlow 6s linear infinite}
+@keyframes dlcLogoFlow{to{background-position:200% center}}
+.panel{border-color:#4d9cff55;box-shadow:0 18px 48px #02061799,0 0 22px #3c78ff14,inset 0 1px #ffffff16;background:radial-gradient(ellipse at 100% 0%,#5b42bb38,transparent 48%),linear-gradient(145deg,#14244aF5,#10152ff7 58%,#101329f7)}
+.primary{color:#061326;background:linear-gradient(105deg,#52e4ff 0%,#4d9cff 46%,#a27aff 100%);box-shadow:0 12px 34px #388cff55,0 0 25px #45dfff25,inset 0 1px 0 #ffffffbb}
+.primary:after{content:"";position:absolute;inset:-60% auto -60% -45%;width:32%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,#ffffff88,transparent);animation:dlcButtonShine 5s ease-in-out infinite;pointer-events:none}
+@keyframes dlcButtonShine{0%,60%{left:-45%}100%{left:130%}}
+.secondary{border-color:#537ddc77;background:linear-gradient(135deg,#1a2c55,#171738 62%,#21163f);box-shadow:inset 0 1px #ffffff17,0 9px 26px #0005}
+.nav{background:linear-gradient(90deg,#070d20f7,#11102cf7,#071727f7);border-top-color:#48aaff55;box-shadow:0 -14px 44px #000a,0 0 28px #315fff18}
+.navbtn.active{background:linear-gradient(145deg,#1b2c59dd,#241747dd);border-color:#5f91ff77;box-shadow:0 0 24px #4e85ff33,inset 0 1px #ffffff20}
+.checkout-summary{background:radial-gradient(ellipse at 100% 0%,#754dff66,transparent 48%),linear-gradient(135deg,#0e3d69,#121b45 58%,#241345);border-color:#58c5ff;box-shadow:0 15px 42px #174cff44,inset 0 1px #ffffff25}
+.checkout-provider{background:linear-gradient(120deg,#102f52,#201844);border-color:#59aaff77}
+@media(hover:hover){.panel,.order,.hero{transition:transform .28s ease,box-shadow .28s ease}.panel:hover,.order:hover{transform:translateY(-3px);box-shadow:0 22px 55px #0008,0 0 26px #428cff26}.hero:hover{box-shadow:0 34px 90px #020615cc,0 0 44px #3c83ff38,inset 0 1px #ffffff26}}
+@media(prefers-reduced-motion:reduce){body:before,.hero,.word-dlc,.primary:after{animation:none!important}.panel,.order,.hero{transition:none!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand" aria-label="STUDIO DLC"><span class="brand-mark" aria-hidden="true"><span>S</span></span><span class="brand-name"><span class="word-studio">STUDIO</span><span class="word-dlc">DLC</span></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -650,7 +673,7 @@ async function createOrder(){
   checkoutOrderId=d.id;
   closeModal();
   toast('Заказ #'+d.id+' создан · открываем YooMoney');
-  const payUrl='https://yoomoney.ru/to/4100119440946091';
+  const payUrl='https://yoomoney.ru/fundraise/1LMLRRQ50V7.261121';
   if(tg&&typeof tg.openLink==='function')tg.openLink(payUrl);
   else window.location.href=payUrl;
  }catch(e){toast(e.message)}
