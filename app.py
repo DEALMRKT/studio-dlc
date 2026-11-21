@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
 
 TOKEN=os.getenv("BOT_TOKEN","")
-OWNER=os.getenv("OWNER_TELEGRAM_ID","")
+OWNER=os.getenv("OWNER_TELEGRAM_ID","").strip()
 CHANNEL=os.getenv("REQUIRED_CHANNEL","@studiodlc")
 PAYMENT=os.getenv("PAYMENT_URL","https://yoomoney.ru/to/4100119440946091")
 DB=os.getenv("DATABASE_URL")
@@ -93,7 +93,7 @@ def user(req):
  return u
 def owner(req):
  u=user(req)
- if not OWNER or str(u["id"])!=OWNER: raise HTTPException(403,"Доступ только владельцу")
+ if not OWNER or str(u["id"]).strip()!=OWNER: raise HTTPException(403,"Доступ только владельцу")
  return u
 def require_subscription(u):
  if not subscribed(u['id']): raise HTTPException(403,'Сначала подпишитесь на @studiodlc и нажмите «Проверить подписку».')
@@ -379,6 +379,14 @@ body.locked #home,body.locked #shop,body.locked #orders,body.locked #profile,bod
 @keyframes gateEnter{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
 @keyframes gateSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){#gate,#gate:before{animation:none!important}.gate-link,.gate-check-btn{transition:none!important}}
+/* Fast, responsive interaction tuning */
+button,.navbtn,.service,.gallery,.modal{ -webkit-tap-highlight-color:transparent; }
+button{touch-action:manipulation;transition:transform .12s ease,opacity .12s ease,background-color .12s ease!important}
+button:active{transform:scale(.975)}
+.navbtn:active{transform:translateY(1px)}
+.reveal{transition:opacity .22s ease,transform .22s ease!important;transition-delay:0ms!important}
+html{scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
 <header class="topbar"><div class="brand"><span class="brandmark">S</span><span>STUDIO <em>DLC</em></span></div><div class="status" id="userStatus">DIGITAL ATELIER</div></header>
@@ -410,7 +418,7 @@ let products=[],selected=null,isOwner=false,subscribed=false;const imageCache={}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000);if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred('success')}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function api(path,opt){opt=opt||{};const h=Object.assign(headers(),opt.headers||{});const r=await fetch(path,Object.assign({},opt,{headers:h}));let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.detail||('Ошибка '+r.status));return d}
-function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));if(v==='orders')loadOrders();if(v==='admin')loadAdmin();window.scrollTo({top:0,behavior:'smooth'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
+function go(v){if(v==='admin'&&!isOwner){toast('Нет доступа');return}if(v==='profile')loadProfile();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.go===v));if(v==='orders')loadOrders();if(v==='admin')loadAdmin();window.scrollTo({top:0,behavior:'instant'});if(tg&&tg.HapticFeedback)tg.HapticFeedback.selectionChanged()}
 function iconFor(category){const s=(category||'').toLowerCase();if(s.includes('сайт'))return '⌘';if(s.includes('форум'))return '◈';if(s.includes('дизайн'))return '✳';return '✦'}
 function card(p){return '<article class="service"><div class="gallery" data-gallery="'+p.id+'"><span class="glyph">'+iconFor(p.category)+'</span></div><div class="category">'+esc(p.category)+'</div><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><div class="price">'+esc(p.price)+'</div><button class="secondary" data-order="'+p.id+'">Подробнее <span>↗</span></button></article>'}
 function renderProducts(){ $('catalog').innerHTML=products.map(card).join('')||'<div class="empty">Скоро здесь появятся услуги.</div>'; $('featured').innerHTML=products.slice(0,2).map(card).join('')||'<div class="empty">Каталог обновляется.</div>';products.forEach(p=>loadProductImages(p.id))}
