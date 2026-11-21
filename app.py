@@ -416,7 +416,7 @@ window.addEventListener('error',e=>{if(e.message)toast('Ошибка интер�
 
 $('orderModal').addEventListener('click',e=>{if(e.target===$('orderModal'))closeModal()});
 async function boot(){if(!tg||!tg.initData){$('userStatus').textContent='ОТКРОЙ В TELEGRAM';$('gate').hidden=false;$('gate').innerHTML='Открой Mini App через кнопку в Telegram-боте <b>@STUDIO DLC</b>, чтобы авторизоваться. Обычный браузер не передаёт Telegram-подпись.';try{await loadProducts()}catch(e){$('catalog').innerHTML='<div class="empty">Открой приложение из Telegram, чтобы загрузить каталог.</div>'}return}
-try{const s=await api('/api/session');$('userStatus').textContent=s.user.first_name||'WELCOME';isOwner=!!s.owner;subscribed=!!s.subscribed;if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}if(!subscribed){$('gate').hidden=false;$('gate').innerHTML='Для доступа подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем перезапусти приложение.';return}await loadProducts()}catch(e){$('gate').hidden=false;$('gate').textContent=e.message;toast(e.message)}}
+try{const s=await api('/api/session');$('userStatus').textContent=s.user.first_name||'WELCOME';isOwner=!!s.owner;subscribed=!!s.subscribed;if(isOwner){$('adminNav').hidden=false;$('admin').hidden=false;}if(!subscribed){$('gate').hidden=false;$('gate').innerHTML='Для доступа подпишись на <a href="https://t.me/studiodlc">канал STUDIO DLC</a>, затем нажми «Проверить подписку». <button class="primary" id="checkSub">Проверить подписку</button>';return}$('gate').hidden=true;await loadProducts()}catch(e){$('gate').hidden=false;$('gate').textContent=e.message;toast(e.message)}}
 boot().then(()=>bindMotion()).catch(e=>toast('Не удалось запустить приложение: '+e.message));
 })();
 </script></body></html>"""
