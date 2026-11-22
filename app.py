@@ -127,10 +127,13 @@ def subscribed(uid):
  with _membership_lock:
   _membership_cache[int(uid)]=(time.monotonic(),ttl,ok)
  return ok
-def notify(msg):
+def _notify_sync(msg):
  if TOKEN and OWNER:
   try: requests.post("https://api.telegram.org/bot"+TOKEN+"/sendMessage",json={"chat_id":OWNER,"text":msg},timeout=8)
   except: pass
+def notify(msg):
+ if TOKEN and OWNER:
+  threading.Thread(target=_notify_sync,args=(msg,),daemon=True).start()
 @app.get("/health")
 def health(): return {"ok":True}
 @app.get("/",response_class=HTMLResponse)
@@ -654,6 +657,7 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .notice{border-color:rgba(211,190,139,.25)}
 input,textarea,select,.field{border-color:rgba(190,211,222,.2)!important;background:rgba(5,10,13,.42)!important;color:#f1f4f5!important}
 a{color:#c6d7df}
+.receipt-modal{max-height:90svh;overflow:auto}.receipt-modal #receiptImage{min-height:120px}
 @media(prefers-reduced-motion:reduce){body:before,.hero,.word-dlc,.primary:after{animation:none!important}}
 </style></head><body><div class="noise"></div><div class="aurora a1"></div><div class="aurora a2"></div>
 <main class="shell">
@@ -682,6 +686,7 @@ a{color:#c6d7df}
 <button class="navbtn" data-go="support"><span class="ico">✧</span><span>Поддержка</span></button>
 </div></nav>
 <div id="orderModal" class="modalback"><div class="modal"><button class="modalclose" data-action="close-modal">×</button><div class="eyebrow">PROJECT REQUEST</div><h2 id="modalTitle">Услуга</h2><p id="modalDesc" class="muted"></p><textarea id="orderComment" class="field" rows="3" placeholder="Опиши задачу, пожелания и сроки..."></textarea><button class="primary wide" data-action="create-order">Создать заявку и перейти к оплате ↗</button><p class="muted">После оплаты прикрепи скриншот в разделе «Заказы». Платёж проверяется владельцем вручную.</p></div></div>
+<div id="receiptModal" class="modalback" role="dialog" aria-modal="true" aria-label="Просмотр чека"><div class="modal receipt-modal"><button class="modalclose" data-action="close-receipt" aria-label="Закрыть">×</button><div class="eyebrow">PAYMENT PROOF</div><h2 id="receiptTitle">Чек заказа</h2><img id="receiptImage" alt="Загруженный чек" style="display:block;width:100%;height:auto;max-height:68svh;object-fit:contain;margin-top:14px;border-radius:14px;background:#080b0f"></div></div>
 <div id="toast" class="toast"></div>
 <script>
 (function(){
@@ -784,7 +789,7 @@ async function grantRole(){const user_id=$('roleUserId').value.trim(),role=$('ro
 async function revokeRole(id){try{await api('/api/owner/roles/'+id,{method:'DELETE'});toast('Роль снята');loadRoles()}catch(e){toast(e.message)}}
 
 async function setStatus(id,status){try{await api('/api/admin/orders/'+id+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});toast('Статус заказа обновлён');loadAdmin()}catch(e){toast(e.message)}}
-async function receiptView(id){try{const x=await api('/api/admin/orders/'+id+'/receipt');const w=window.open();if(w)w.document.write('<title>Чек заказа #'+id+'</title><body style="margin:0;background:#111;display:grid;place-items:center"><img style="max-width:100%;max-height:100vh" src="data:'+x.type+';base64,'+x.data+'"></body>');else toast('Разреши всплывающие окна для просмотра чека')}catch(e){toast(e.message)}}
+async function receiptView(id){const modal=$('receiptModal'),img=$('receiptImage'),label=$('receiptTitle');if(!modal||!img){toast('Окно просмотра не найдено');return}label.textContent='Чек заказа #'+id;img.removeAttribute('src');modal.classList.add('open');try{const x=await api('/api/admin/orders/'+id+'/receipt');img.src='data:'+(x.type||'image/jpeg')+';base64,'+x.data}catch(e){modal.classList.remove('open');toast(e.message)}}
 async function editProduct(id){const p=products.find(x=>Number(x.id)===Number(id));if(!p)return;const title=prompt('Название услуги',p.title);if(title===null)return;const price=prompt('Цена',p.price),description=prompt('Описание',p.description),category=prompt('Категория',p.category);try{await api('/api/admin/products/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,price,description,category,active:true})});await loadProducts();loadAdmin();toast('Услуга обновлена')}catch(e){toast(e.message)}}
 async function deleteProduct(id){if(!confirm('Удалить услугу из каталога?'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});await loadProducts();loadAdmin();toast('Услуга удалена')}catch(e){toast(e.message)}}
 function routeFromButton(b){if(!b||b.disabled)return;const g=b.dataset.go;if(g){go(g);return}if(b.dataset.order){openOrder(b.dataset.order);return}const a=b.dataset.action;if(a==='close-modal')closeModal();else if(a==='create-order')createOrder();else if(a==='open-payment')openCheckoutPayment();else if(a==='checkout-orders'){closeModal();go('orders');loadOrders();}else if(a==='send-post')sendPost();else if(a==='add-product')addProduct();else if(a==='create-ticket')createTicket();else if(a==='ticket-open')openTicket(b.dataset.ticket);else if(a==='ticket-send')sendTicketReply();else if(a==='staff-ticket-open')openStaffTicket(b.dataset.ticket);else if(a==='staff-reply')sendStaffReply();else if(a==='ticket-close')closeStaffTicket();else if(a==='toggle-more')toggleMore();else if(a==='close-more')closeMore();else if(a==='grant-role')grantRole();else if(b.dataset.revokeRole)revokeRole(b.dataset.revokeRole);else if(b.dataset.upload)upload(b.dataset.upload);else if(b.dataset.review)submitReview(b.dataset.review);else if(b.dataset.status)setStatus(b.dataset.status,b.dataset.value);else if(b.dataset.receipt)receiptView(b.dataset.receipt);else if(b.dataset.edit)editProduct(b.dataset.edit);else if(b.dataset.delete)deleteProduct(b.dataset.delete);else if(b.dataset.addphotos){const input=$('photos-'+b.dataset.addphotos);if(input&&input.files.length)uploadProductImages(Number(b.dataset.addphotos),input.files).then(()=>toast('Фотографии добавлены')).catch(e=>toast(e.message));else toast('Выбери фотографии')}else if(b.dataset.delphoto){const [pid,iid]=b.dataset.delphoto.split(':');api('/api/admin/products/'+pid+'/images/'+iid,{method:'DELETE'}).then(()=>loadProductImages(Number(pid))).then(()=>toast('Фото удалено')).catch(e=>toast(e.message))}else if(b.dataset.galleryprev||b.dataset.gallerynext){const pid=Number(b.dataset.galleryprev||b.dataset.gallerynext);const el=b.closest('.gallery');paintGallery(el,pid,(Number(el.dataset.index)||0)+(b.dataset.gallerynext?1:-1))}}
